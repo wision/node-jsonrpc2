@@ -269,6 +269,7 @@ Client.prototype.call = function (method, params, opts, callback)
     opts = {};
   }
   opts = opts || {};
+  Endpoint.trace('-->', 'Http call (method '+method+'): ' + JSON.stringify(params));
   this.connectHttp(method, params, opts, function (id, request, response) {
     var data = '';
     response.on('data', function (chunk) {
@@ -317,7 +318,7 @@ Server.prototype.listenRaw = function listenRaw(port, host)
 {
   var server = net.createServer(this.handleRaw.bind(this));
   server.listen(port, host);
-  Endpoint.trace('***', 'Server listening on socket://' +
+  Endpoint.trace('***', 'Server listening on tcp://' +
                  (host || '127.0.0.1') + ':' + port + '/');
   return server;
 };
@@ -406,6 +407,9 @@ Server.prototype.handleHttp = function(req, res)
 
     var callback = function(err, result) {
       if (err) {
+        if (self.listeners('error').length) {
+          self.emit('error', err);
+        }
         Endpoint.trace('-->', 'Failure (id ' + decoded.id + '): ' +
                        (err.stack ? err.stack : err.toString()));
         err = err.toString();
@@ -566,7 +570,7 @@ Connection.prototype.call = function call(method, params, callback)
     this.callbacks[id] = callback;
   }
 
-  Endpoint.trace('-->', 'Call (method '+method+'): ' + JSON.stringify(params));
+  Endpoint.trace('-->', 'Connection call (method '+method+'): ' + JSON.stringify(params));
   var data = JSON.stringify({
     method: method,
     params: params,
@@ -602,7 +606,9 @@ Connection.prototype.stream = function (onend)
 
 Connection.prototype.handleMessage = function handleMessage(msg)
 {
-  if (msg.hasOwnProperty('result') || 
+  var self = this;
+
+  if (msg.hasOwnProperty('result') ||
       msg.hasOwnProperty('error') &&
       msg.hasOwnProperty('id') &&
       "function" === typeof this.callbacks[msg.id]) {
@@ -614,6 +620,9 @@ Connection.prototype.handleMessage = function handleMessage(msg)
   } else if (msg.hasOwnProperty('method')) {
     this.endpoint.handleCall(msg, this, (function (err, result) {
       if (err) {
+        if (self.listeners('error').length) {
+          self.emit('error', err);
+        }
         Endpoint.trace('-->', 'Failure (id ' + msg.id + '): ' +
                        (err.stack ? err.stack : err.toString()));
       }

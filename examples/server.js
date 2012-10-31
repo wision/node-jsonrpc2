@@ -3,6 +3,10 @@ var events = require('events');
 
 var server = new rpc.Server();
 
+server.on('error', function(err) {
+  console.log(err)
+})
+
 server.enableAuth("myuser", "secret123");
 
 /* Create two simple functions */
