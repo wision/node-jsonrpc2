@@ -1,8 +1,6 @@
 var util = require('util');
 var rpc = require('../src/jsonrpc');
 
-rpc.Endpoint.trace = function () {};
-
 var client = new rpc.Client(8088, 'localhost', "myuser", "secret123");
 
 client.call('add', [1, 2], function (err, result) {

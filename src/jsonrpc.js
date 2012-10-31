@@ -1,4 +1,4 @@
-var util = require('util');
+var debug = require('debug')('jsonrpc');
 var net = require('net');
 var http = require('http');
 var util = require('util');
@@ -29,7 +29,7 @@ util.inherits(Endpoint, events.EventEmitter);
  */
 Endpoint.trace = function(direction, message)
 {
-  console.log('   ' + direction + '   ' + message);
+	debug('   ' + direction + '   ' + message);
 }
 
 /**
