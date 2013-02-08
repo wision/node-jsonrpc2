@@ -121,8 +121,6 @@ Client.prototype.connectHttp = function connectHttp(method, params, opts, callba
   }
   opts = opts || {};
 
-  var client = http.createClient(this.port, this.host);
-
   var id = 1;
 
   // First we encode the request into JSON
@@ -131,12 +129,6 @@ Client.prototype.connectHttp = function connectHttp(method, params, opts, callba
     'method': method,
     'params': params,
     'jsonrpc': '2.0'
-  });
-
-  // Report errors from the http client. This also prevents crashes since
-  // an exception is thrown if we don't handle this event.
-  client.on('error', function(err) {
-    callback(err);
   });
 
   var headers = {};
@@ -152,7 +144,20 @@ Client.prototype.connectHttp = function connectHttp(method, params, opts, callba
   headers['Content-Length'] = Buffer.byteLength(requestJSON, 'utf8');
 
   // Now we'll make a request to the server
-  var request = client.request('POST', opts.path || '/', headers);
+  var options = {
+		hostname: this.host,
+		port: this.port,
+		path: opts.path || '/',
+		method: 'POST',
+    headers: headers
+	};
+	var request = http.request(options);
+
+  // Report errors from the http client. This also prevents crashes since
+  // an exception is thrown if we don't handle this event.
+  request.on('error', function(err) {
+    callback(err);
+  });
   request.write(requestJSON);
   request.on('response', callback.bind(this, id, request));
 };
