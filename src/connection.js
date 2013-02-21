@@ -7,7 +7,7 @@ var Connection = function Connection(ep) {
 	events.EventEmitter.call(this);
 
 	this.endpoint = ep;
-	this.callbacks = [];
+	this.callbacks = {};
 	this.latestId = 0;
 
 	// Default error handler (prevents "uncaught error event")
@@ -75,6 +75,7 @@ Connection.prototype.handleMessage = function handleMessage(msg) {
 			"function" === typeof this.callbacks[msg.id]) {
 		try {
 			this.callbacks[msg.id](msg.error, msg.result);
+			delete this.callbacks[msg.id];
 		} catch (err) {
 			// TODO: What do we do with erroneous callbacks?
 		}
