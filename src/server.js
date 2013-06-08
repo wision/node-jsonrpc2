@@ -97,7 +97,13 @@ Server.prototype.handleHttp = function (req, res) {
 	}
 
 	var handle = function (buf) {
-		var decoded = JSON.parse(buf);
+		// Check if json is valid JSON document
+		try {
+			var decoded = JSON.parse(buf);
+		} catch(error) {
+			Server.handleHttpError(req, res, 400, INVALID_REQUEST);
+			return;
+		}
 
 		// Check for the required fields, and if they aren't there, then
 		// dispatch to the handleHttpError function.
