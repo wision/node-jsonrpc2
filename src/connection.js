@@ -36,6 +36,7 @@ Connection.prototype.call = function call(method, params, callback) {
 
 	Endpoint.trace('-->', 'Connection call (method ' + method + '): ' + JSON.stringify(params));
 	var data = JSON.stringify({
+		jsonrpc: '2.0',
 		method: method,
 		params: params,
 		id: id
@@ -107,6 +108,7 @@ Connection.prototype.handleMessage = function handleMessage(msg) {
 
 Connection.prototype.sendReply = function sendReply(err, result, id) {
 	var data = JSON.stringify({
+		jsonrpc: '2.0',
 		result: result,
 		error: err,
 		id: id

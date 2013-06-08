@@ -145,6 +145,7 @@ Server.prototype.handleHttp = function (req, res) {
 
 			// TODO: Not sure if we should return a message if decoded.id == null
 			reply({
+				'jsonrpc': '2.0',
 				'result': result,
 				'error': err,
 				'id': decoded.id
