@@ -192,6 +192,12 @@ Client.prototype.call = function (method, params, opts, callback)
 	opts = opts || {};
 	Endpoint.trace('-->', 'Http call (method '+method+'): ' + JSON.stringify(params));
 	this.connectHttp(method, params, opts, function (id, request, response) {
+		// Check if response object exists.
+		if (!response) {
+			callback(new Error('Have no response object'));
+			return;
+		}
+
 		var data = '';
 		response.on('data', function (chunk) {
 			data += chunk;
