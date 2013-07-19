@@ -13,7 +13,8 @@ var HttpServerConnection = Connection.define('HttpServerConnection', {
     this.res.connection.on('end', function (){
       self.emit('end');
     });
-    this.$super();
+
+    this.$super(server);
   },
 
   /**

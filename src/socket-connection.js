@@ -32,7 +32,7 @@ var SocketConnection = Connection.define('SocketConnection', {
     this.conn.on('close', function (hadError){
       self.emit('close', hadError);
 
-      if (typeof self.endpoint !== 'undefined' &&
+      if (
           self.endpoint.$className === 'Client' &&
           self.autoReconnect && !self.ended
         ) {
@@ -63,9 +63,7 @@ var SocketConnection = Connection.define('SocketConnection', {
 
   reconnect: function (){
     this.ended = false;
-    if (typeof(this.endpoint) !== 'undefined' &&
-        this.endpoint.$className === 'Client'
-      ) {
+    if (this.endpoint.$className === 'Client') {
       this.conn.connect(this.endpoint.port, this.endpoint.host);
     } else {
       throw new Error('Cannot reconnect a connection from the server-side.');
