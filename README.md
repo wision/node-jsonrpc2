@@ -62,12 +62,13 @@ server.listenRaw(8080, 'localhost'); // Listen on socket
 
 ## Debugging
 
-This module uses the [debug](http://github.com) package, to debug it, you need to set the Node
+This module uses the [debug](http://github.com/visionmedia/debug) package, to debug it, you need to set the Node
 environment variable to jsonrpc, either inside your program using `program.env.DEBUG='jsonrpc'`
 or setting it in command line as `set DEBUG=jsonrpc` or `export DEBUG=jsonrpc`
 
+## Examples
 
-To learn more, see the examples directory, peruse test/jsonrpc-test.js, or
+To learn more, see the `examples` directory, peruse `test/jsonrpc-test.js`, or
 simply "Use The Source, Luke".
 
 More documentation and development is on its way.
