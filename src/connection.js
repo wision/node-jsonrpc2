@@ -18,7 +18,7 @@ var Connection = EventEmitter.define('Connection', {
    * Note that some ways to make RPC calls bypass this method, for example HTTP
    * calls and responses are done in other places.
    */
-  call     : function call(method, params, callback){
+  call     : function(method, params, callback){
     if (!_.isArray(params)) {
       params = [params];
     }
@@ -45,7 +45,7 @@ var Connection = EventEmitter.define('Connection', {
    * Connection types that support sending additional data will override this
    * method.
    */
-  write: function write(){
+  write: function(){
     throw new Error('Tried to write data on unsupported connection type.');
   },
 
@@ -62,55 +62,60 @@ var Connection = EventEmitter.define('Connection', {
     }
   },
 
-  handleMessage: function handleMessage(msg){
+  handleMessage: function(msg){
     var self = this;
 
-    if (msg.hasOwnProperty('result') ||
-      msg.hasOwnProperty('error') &&
-        msg.hasOwnProperty('id') && _.isFunction(this.callbacks[msg.id])
-      ) {
-      try {
-        this.callbacks[msg.id](msg.error, msg.result);
-        delete this.callbacks[msg.id];
-      } catch (err) {
-        // TODO: What do we do with erroneous callbacks?
-      }
-    }
-    else if (msg.hasOwnProperty('method')) {
-      this.endpoint.handleCall(msg, this, (function (err, result){
-        if (err) {
-          if (self.listeners('error').length) {
-            self.emit('error', err);
+    if (msg) {
+      if (
+          (msg.hasOwnProperty('result') || msg.hasOwnProperty('error')) &&
+          msg.hasOwnProperty('id') && _.isFunction(this.callbacks[msg.id])
+        ) {
+        try {
+          this.callbacks[msg.id](msg.error, msg.result);
+          delete this.callbacks[msg.id];
+        } catch (err) {
+          // TODO: What do we do with erroneous callbacks?
+        }
+      } else if (msg.hasOwnProperty('method')) {
+        this.endpoint.handleCall(msg, this, (function (err, result){
+          if (err) {
+            if (self.listeners('error').length) {
+              self.emit('error', err);
+            }
+            Endpoint.trace('-->',
+              'Failure ' + (typeof msg['id'] !== 'undefined' ? '(id ' + msg.id + ')': '') + ': ' +
+              (err.stack ? err.stack : err.toString())
+            );
           }
-          Endpoint.trace('-->', 'Failure (id ' + msg.id + '): ' +
-            (err.stack ? err.stack : err.toString()));
-        }
 
-        if (_.isUndefined(msg.id) || _.isNull(msg.id)) {
-          return;
-        }
+          // Return if it's just a notification (no id)
+          if (!Endpoint.hasId(msg)) {
+            return;
+          }
 
-        if (err) {
-          err = err.toString();
-          result = null;
-        } else {
-          Endpoint.trace('-->', 'Response (id ' + msg.id + '): ' +
-            JSON.stringify(result));
-          err = null;
-        }
+          if (err) {
+            err = err.toString();
+            result = null;
+          } else {
+            Endpoint.trace('-->', 'Response (id ' + msg.id + '): ' +
+              JSON.stringify(result));
+            err = null;
+          }
 
-        this.sendReply(err, result, msg.id);
-      }).bind(this));
+          this.sendReply(err, result, msg.id);
+        }).bind(this));
+      }
     }
   },
 
-  sendReply: function sendReply(err, result, id){
+  sendReply: function(err, result, id){
     var data = JSON.stringify({
       jsonrpc: '2.0',
       result : result,
       error  : err,
       id     : id
     });
+
     this.write(data);
   }
 });

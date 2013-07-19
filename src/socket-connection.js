@@ -13,6 +13,7 @@ var SocketConnection = Connection.define('SocketConnection', {
     var self = this;
 
     this.conn = conn;
+    this.endpoint = endpoint;
     this.autoReconnect = true;
     this.ended = true;
 
@@ -31,8 +32,9 @@ var SocketConnection = Connection.define('SocketConnection', {
     this.conn.on('close', function (hadError){
       self.emit('close', hadError);
 
-      if (typeof(self.endpoint) !== 'undefined' && typeof(self.endpoint['$className']) !== 'undefined' &&
-        self.endpoint.$className === 'Client' && self.autoReconnect && !self.ended
+      if (typeof self.endpoint !== 'undefined' &&
+          self.endpoint.$className === 'Client' &&
+          self.autoReconnect && !self.ended
         ) {
         if (hadError) {
           // If there was an error, we'll wait a moment before retrying
@@ -59,11 +61,10 @@ var SocketConnection = Connection.define('SocketConnection', {
     this.conn.end();
   },
 
-  reconnect: function reconnect(){
+  reconnect: function (){
     this.ended = false;
     if (typeof(this.endpoint) !== 'undefined' &&
-      typeof(this.endpoint['$className']) !== 'undefined' &&
-      this.endpoint.$className === 'Client'
+        this.endpoint.$className === 'Client'
       ) {
       this.conn.connect(this.endpoint.port, this.endpoint.host);
     } else {

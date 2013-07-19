@@ -28,6 +28,7 @@ var Endpoint = EventEmitter.define('Endpoint', {
       }
     } else {
       var funcs = [];
+
       for (var funcName in func) {
         if (Object.prototype.hasOwnProperty.call(func, funcName)) {
           var funcObj = func[funcName];
@@ -41,11 +42,12 @@ var Endpoint = EventEmitter.define('Endpoint', {
           }
         }
       }
+
       Endpoint.trace('***', 'exposing module: ' + name + ' [funs: ' + funcs.join(', ') + ']');
     }
     return func;
   },
-  handleCall: function handleCall(decoded, conn, callback){
+  handleCall: function(decoded, conn, callback){
     Endpoint.trace('<--', 'Request (id ' + decoded.id + '): ' +
       decoded.method + '(' + decoded.params.join(', ') + ')');
 
@@ -71,6 +73,14 @@ var Endpoint = EventEmitter.define('Endpoint', {
    */
   trace: function (direction, message){
     debug('   ' + direction + '   ' + message);
+  },
+  /**
+   * Check if current request has an id
+   * @param {Object} request
+   * @return {Boolean}
+   */
+  hasId: function(request){
+    return request && typeof request['id'] !== 'undefined' && /^\-?\d+$/.test(request['id']);
   }
 });
 

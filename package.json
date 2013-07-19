@@ -1,6 +1,6 @@
 {
   "name": "json-rpc2",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "JSON-RPC server and client library",
   "main": "./src/jsonrpc.js",
   "keywords": [

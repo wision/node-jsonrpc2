@@ -5,9 +5,20 @@ var
   http = require('http'),
   JsonParser = require('jsonparse'),
 
-  UNAUTHORIZED = 'Unauthorized\n',
-  METHOD_NOT_ALLOWED = 'Method Not Allowed\n',
-  INVALID_REQUEST = 'Invalid Request\n',
+  UNAUTHORIZED =
+    'Unauthorized\n',
+  METHOD_NOT_ALLOWED =
+    'Method Not Allowed\n',
+  INVALID_REQUEST =
+    'Invalid Request\n',
+
+  errors = {
+    '-32700': 'Parse error',
+    '-32600': 'Invalid Request',
+    '-32601': 'Method not found',
+    '-32602': 'Invalid params',
+    '-32603': 'Internal error'
+  },
 
   SocketConnection = require('./socket-connection.js'),
   HttpServerConnection = require('./http-server-connection.js');
@@ -126,13 +137,15 @@ var Server = Endpoint.define('Server', {
           err = null;
         }
 
-        // TODO: Not sure if we should return a message if decoded.id == null
-        reply({
-          'jsonrpc': '2.0',
-          'result' : result,
-          'error'  : err,
-          'id'     : decoded.id
-        });
+        // Don't return a message if it doesn't have an ID
+        if (Endpoint.hasId(decoded)) {
+          reply({
+            'jsonrpc': '2.0',
+            'result' : result,
+            'error'  : err,
+            'id'     : decoded.id
+          });
+        }
       };
 
       var conn = HttpServerConnection.create(self, req, res);
@@ -168,16 +181,15 @@ var Server = Endpoint.define('Server', {
       // client library.
       //
       // The authentication message is to be sent as follows:
-      //   {''method'': ''auth'', ''params'': [''myuser'', ''mypass''], id: 0}
+      //   {'method': 'auth', 'params': ['myuser', 'mypass'], id: 0}
       if (requireAuth) {
         if (decoded.method !== 'auth') {
           // Try to notify client about failure to authenticate
-          if (_.isNumber(decoded.id)) {
+          if (Endpoint.hasId(decoded)) {
             conn.sendReply('Error: Unauthorized', null, decoded.id);
           }
-        }
-        else {
-          // Handle ''auth'' message
+        } else {
+          // Handle 'auth' message
           if (_.isArray(decoded.params) &&
             decoded.params.length === 2 &&
             self.authHandler(decoded.params[0], decoded.params[1])) {
@@ -185,11 +197,11 @@ var Server = Endpoint.define('Server', {
             requireAuth = false;
 
             // Notify client about success
-            if (_.isNumber(decoded.id)) {
+            if (Endpoint.hasId(decoded)) {
               conn.sendReply(null, true, decoded.id);
             }
           } else {
-            if (_.isNumber(decoded.id)) {
+            if (Endpoint.hasId(decoded)) {
               conn.sendReply('Error: Invalid credentials', null, decoded.id);
             }
           }
