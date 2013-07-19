@@ -1,119 +1,116 @@
-var util = require('util');
-var events = require('events');
+'use strict';
 
-var Endpoint = require('./endpoint.js');
+var Connection = EventEmitter.define('Connection', {
+  construct: function (ep){
+    this.endpoint = ep;
+    this.callbacks = {};
+    this.latestId = 0;
 
-var Connection = function Connection(ep) {
-	events.EventEmitter.call(this);
+    // Default error handler (prevents ''uncaught error event'')
+    this.on('error', function (){
+    });
+  },
+  /**
+   * Make a standard RPC call to the other endpoint.
+   *
+   * Note that some ways to make RPC calls bypass this method, for example HTTP
+   * calls and responses are done in other places.
+   */
+  call     : function call(method, params, callback){
+    if (!_.isArray(params)) {
+      params = [params];
+    }
 
-	this.endpoint = ep;
-	this.callbacks = {};
-	this.latestId = 0;
+    var id = null;
+    if (_.isFunction(callback)) {
+      id = ++this.latestId;
+      this.callbacks[id] = callback;
+    }
 
-	// Default error handler (prevents "uncaught error event")
-	this.on('error', function () {
-	});
-};
+    Endpoint.trace('-->', 'Connection call (method ' + method + '): ' + JSON.stringify(params));
+    var data = JSON.stringify({
+      jsonrpc: '2.0',
+      method : method,
+      params : params,
+      id     : id
+    });
+    this.write(data);
+  },
 
-util.inherits(Connection, events.EventEmitter);
+  /**
+   * Dummy method for sending data.
+   *
+   * Connection types that support sending additional data will override this
+   * method.
+   */
+  write: function write(){
+    throw new Error('Tried to write data on unsupported connection type.');
+  },
 
-/**
- * Make a standard RPC call to the other endpoint.
- *
- * Note that some ways to make RPC calls bypass this method, for example HTTP
- * calls and responses are done in other places.
- */
-Connection.prototype.call = function call(method, params, callback) {
-	if (!Array.isArray(params)) {
-		params = [params];
-	}
+  /**
+   * Keep the connection open.
+   *
+   * This method is used to tell a HttpServerConnection to stay open. In order
+   * to keep it compatible with other connection types, we add it here and make
+   * it register a connection end handler.
+   */
+  stream: function (onend){
+    if (_.isFunction(onend)) {
+      this.on('end', onend);
+    }
+  },
 
-	var id = null;
-	if ("function" === typeof callback) {
-		id = ++this.latestId;
-		this.callbacks[id] = callback;
-	}
+  handleMessage: function handleMessage(msg){
+    var self = this;
 
-	Endpoint.trace('-->', 'Connection call (method ' + method + '): ' + JSON.stringify(params));
-	var data = JSON.stringify({
-		jsonrpc: '2.0',
-		method: method,
-		params: params,
-		id: id
-	});
-	this.write(data);
-};
+    if (msg.hasOwnProperty('result') ||
+      msg.hasOwnProperty('error') &&
+        msg.hasOwnProperty('id') && _.isFunction(this.callbacks[msg.id])
+      ) {
+      try {
+        this.callbacks[msg.id](msg.error, msg.result);
+        delete this.callbacks[msg.id];
+      } catch (err) {
+        // TODO: What do we do with erroneous callbacks?
+      }
+    }
+    else if (msg.hasOwnProperty('method')) {
+      this.endpoint.handleCall(msg, this, (function (err, result){
+        if (err) {
+          if (self.listeners('error').length) {
+            self.emit('error', err);
+          }
+          Endpoint.trace('-->', 'Failure (id ' + msg.id + '): ' +
+            (err.stack ? err.stack : err.toString()));
+        }
 
-/**
- * Dummy method for sending data.
- *
- * Connection types that support sending additional data will override this
- * method.
- */
-Connection.prototype.write = function write(data) {
-	throw new Error("Tried to write data on unsupported connection type.");
-};
+        if (_.isUndefined(msg.id) || _.isNull(msg.id)) {
+          return;
+        }
 
-/**
- * Keep the connection open.
- *
- * This method is used to tell a HttpServerConnection to stay open. In order
- * to keep it compatible with other connection types, we add it here and make
- * it register a connection end handler.
- */
-Connection.prototype.stream = function (onend) {
-	if ("function" === typeof onend) {
-		this.on('end', onend);
-	}
-};
+        if (err) {
+          err = err.toString();
+          result = null;
+        } else {
+          Endpoint.trace('-->', 'Response (id ' + msg.id + '): ' +
+            JSON.stringify(result));
+          err = null;
+        }
 
-Connection.prototype.handleMessage = function handleMessage(msg) {
-	var self = this;
+        this.sendReply(err, result, msg.id);
+      }).bind(this));
+    }
+  },
 
-	if (msg.hasOwnProperty('result') ||
-		msg.hasOwnProperty('error') &&
-			msg.hasOwnProperty('id') &&
-			"function" === typeof this.callbacks[msg.id]) {
-		try {
-			this.callbacks[msg.id](msg.error, msg.result);
-			delete this.callbacks[msg.id];
-		} catch (err) {
-			// TODO: What do we do with erroneous callbacks?
-		}
-	} else if (msg.hasOwnProperty('method')) {
-		this.endpoint.handleCall(msg, this, (function (err, result) {
-			if (err) {
-				if (self.listeners('error').length) {
-					self.emit('error', err);
-				}
-				Endpoint.trace('-->', 'Failure (id ' + msg.id + '): ' +
-					(err.stack ? err.stack : err.toString()));
-			}
+  sendReply: function sendReply(err, result, id){
+    var data = JSON.stringify({
+      jsonrpc: '2.0',
+      result : result,
+      error  : err,
+      id     : id
+    });
+    this.write(data);
+  }
+});
 
-			if ("undefined" === msg.id || null === msg.id) return;
-
-			if (err) {
-				err = err.toString();
-				result = null;
-			} else {
-				Endpoint.trace('-->', 'Response (id ' + msg.id + '): ' +
-					JSON.stringify(result));
-				err = null;
-			}
-
-			this.sendReply(err, result, msg.id);
-		}).bind(this));
-	}
-};
-
-Connection.prototype.sendReply = function sendReply(err, result, id) {
-	var data = JSON.stringify({
-		jsonrpc: '2.0',
-		result: result,
-		error: err,
-		id: id
-	});
-	this.write(data);
-};
-
-module.exports = Connection
+module.exports = Connection;

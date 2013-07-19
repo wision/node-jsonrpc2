@@ -3,18 +3,22 @@
 This is a JSON-RPC server and client library for node.js <http://nodejs.org/>,
 the V8 based evented IO framework.
 
+This fork is a rewrite with proper testing and linted code, compatible with node >= 0.8
+
 ## Install
 
 To install node-jsonrpc2 in the current directory, run:
 
-    npm install jsonrpc2
+```bash
+npm install json-rpc2 --save
+```
 
 ## Usage
 
 Firing up an efficient JSON-RPC server becomes extremely simple:
 
 ``` javascript
-var rpc = require('jsonrpc2');
+var rpc = require('json-rpc2');
 
 var server = new rpc.Server();
 
@@ -29,7 +33,7 @@ server.listen(8000, 'localhost');
 And creating a client to speak to that server is easy too:
 
 ``` javascript
-var rpc = require('jsonrpc2');
+var rpc = require('json-rpc2');
 var util = require('util');
 
 var client = new rpc.Client(8000, 'localhost');

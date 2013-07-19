@@ -1,18 +1,26 @@
 {
-  "name": "jsonrpc2",
-  "version": "0.1.2",
+  "name": "json-rpc2",
+  "version": "0.2.0",
   "description": "JSON-RPC server and client library",
-  "main": "./src/jsonrpc",
+  "main": "./src/jsonrpc.js",
   "keywords": [
     "json",
     "rpc",
+    "rpc2",
+    "json-rpc",
+    "jsonrpc",
     "server",
     "client"
   ],
   "author": "Eric Florenzano <floguy@gmail.com> (eflorenzano.com)",
   "dependencies": {
     "jsonparse": ">=0.0.1",
-    "debug": "*"
+    "debug": "*",
+    "lodash": "*",
+    "es5class": "*"
+  },
+  "engines": {
+    "node": ">=0.8.0"
   },
   "contributors": [
     "Bill Casarin <bill@casarin.ca> (jb55.com)",
@@ -20,10 +28,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/bitcoinjs/node-jsonrpc2.git"
+    "url": "git://github.com/pocesar/node-jsonrpc2.git"
   },
   "devDependencies": {
     "async": "~0.2.5",
-    "underscore": "~1.4.4"
+    "underscore": "~1.4.4",
+    "mocha": "*",
+    "expect.js": "*",
+    "jshint": "*"
+  },
+  "scripts": {
+    "test": "jshint src test && mocha test/*.js"
   }
 }
