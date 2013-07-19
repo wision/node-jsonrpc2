@@ -12,13 +12,13 @@ var
   INVALID_REQUEST =
     'Invalid Request\n',
 
-  errors = {
+  /*errors = {
     '-32700': 'Parse error',
     '-32600': 'Invalid Request',
     '-32601': 'Method not found',
     '-32602': 'Invalid params',
     '-32603': 'Internal error'
-  },
+  },*/
 
   SocketConnection = require('./socket-connection.js'),
   HttpServerConnection = require('./http-server-connection.js');
