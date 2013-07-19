@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/pocesar/node-jsonrpc2.png?branch=master)](https://travis-ci.org/pocesar/node-jsonrpc2)
 
+[![NPM](https://nodei.co/npm/json-rpc2.png?downloads=true)](https://nodei.co/npm/json-rpc2/)
+
 # node-jsonrpc2
 
 This is a JSON-RPC server and client library for node.js <http://nodejs.org/>,
