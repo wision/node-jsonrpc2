@@ -167,7 +167,7 @@ var Server = Endpoint.define('Server', {
 
     var self = this;
 
-    var conn = SocketConnection.create(this, socket);
+    var conn = SocketConnection.create(self, socket);
     var parser = new JsonParser();
     var requireAuth = !!this.authHandler;
 

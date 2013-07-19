@@ -45,7 +45,7 @@ var SocketConnection = Connection.define('SocketConnection', {
       }
     });
 
-    this.$super();
+    this.$super(endpoint);
   },
   write    : function (data){
     if (!this.conn.writable) {

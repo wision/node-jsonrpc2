@@ -70,6 +70,7 @@ var Connection = EventEmitter.define('Connection', {
           (msg.hasOwnProperty('result') || msg.hasOwnProperty('error')) &&
           msg.hasOwnProperty('id') && _.isFunction(this.callbacks[msg.id])
         ) {
+        // Are we in the client?
         try {
           this.callbacks[msg.id](msg.error, msg.result);
           delete this.callbacks[msg.id];
@@ -77,13 +78,14 @@ var Connection = EventEmitter.define('Connection', {
           // TODO: What do we do with erroneous callbacks?
         }
       } else if (msg.hasOwnProperty('method')) {
+        // Are we in the server?
         this.endpoint.handleCall(msg, this, (function (err, result){
           if (err) {
             if (self.listeners('error').length) {
               self.emit('error', err);
             }
             Endpoint.trace('-->',
-              'Failure ' + (typeof msg['id'] !== 'undefined' ? '(id ' + msg.id + ')': '') + ': ' +
+              'Failure ' + (Endpoint.hasId(msg) ? '(id ' + msg.id + ')': '') + ': ' +
               (err.stack ? err.stack : err.toString())
             );
           }
