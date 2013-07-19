@@ -1,0 +1,24 @@
+{
+  "bitwise" : true,
+  "curly"   : true,
+  "eqeqeq"  : true,
+  "forin"   : true,
+  "noarg"   : true,
+  "noempty" : true,
+  "nonew"   : true,
+  "undef"   : true,
+  "unused"  : true,
+  "devel"   : true,
+  "node"    : true,
+  "sub"     : true,
+  "quotmark": "single",
+  "globals" : {
+    "_"           : true,
+    "_l"          : true,
+    "Endpoint"    : true,
+    "ES5Class"    : true,
+    "EventEmitter": true,
+    "util"        : true,
+    "events"      : true
+  }
+}

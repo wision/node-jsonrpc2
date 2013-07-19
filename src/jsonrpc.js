@@ -1,3 +1,5 @@
+//process.env.DEBUG = 'jsonrpc';
+
 ES5Class = require('es5class');
 _ = require('lodash');
 util = require('util');

@@ -1,25 +1,26 @@
 var rpc = require('../src/jsonrpc');
 var events = require('events');
 
-var server = new rpc.Server();
+var server = rpc.Server.create();
 
-server.on('error', function(err) {
-  console.log(err)
-})
+server.on('error', function (err){
+  console.log(err);
+});
 
 // Create a message bus with random events on it
 var firehose = new events.EventEmitter();
-(function emitFirehoseEvent() {
-  firehose.emit('foobar', {data: 'random '+Math.random()});
-  setTimeout(arguments.callee, 200+Math.random()*3000);
+(function emitFirehoseEvent(){
+  firehose.emit('foobar', {data: 'random ' + Math.random()});
+  setTimeout(emitFirehoseEvent, 200 + Math.random() * 3000);
 })();
 
-var listen = function (args, opts, callback) {
-  function handleFirehoseEvent(event) {
+var listen = function (args, opts, callback){
+  var handleFirehoseEvent = function (event){
     opts.call('event', event.data);
   };
+
   firehose.on('foobar', handleFirehoseEvent);
-  opts.stream(function () {
+  opts.stream(function (){
     console.log('connection ended');
     firehose.removeListener('foobar', handleFirehoseEvent);
   });

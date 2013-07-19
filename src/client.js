@@ -1,10 +1,11 @@
 'use strict';
 
-var net = require('net');
-var http = require('http');
-var JsonParser = require('jsonparse');
-
-var SocketConnection = require('./socket-connection.js');
+var
+  net = require('net'),
+  http = require('http'),
+  JsonParser = require('jsonparse'),
+  events = require('events'),
+  SocketConnection = require('./socket-connection.js');
 
 /**
  * JSON-RPC Client.
@@ -15,6 +16,7 @@ var Client = Endpoint.define('Client', {
     this.host = host;
     this.user = user;
     this.password = password;
+    this.$super();
   },
   /**
    * Make HTTP connection/request.
@@ -22,7 +24,7 @@ var Client = Endpoint.define('Client', {
    * In HTTP mode, we get to submit exactly one message and receive up to n
    * messages.
    */
-  connectHttp  : function connectHttp(method, params, opts, callback){
+  connectHttp  : function(method, params, opts, callback){
     if (_.isFunction(opts)) {
       callback = opts;
       opts = {};
@@ -75,20 +77,19 @@ var Client = Endpoint.define('Client', {
    * This implements JSON-RPC over a raw socket. This mode allows us to send and
    * receive as many messages as we like once the socket is established.
    */
-  connectSocket: function connectSocket(callback){
+  connectSocket: function(callback){
     var self = this;
 
     var socket = net.connect(this.port, this.host, function (){
       // Submit non-standard 'auth' message for raw sockets.
-      if (_.isString(self.user) && _.isString(self.password)) {
+      if (!_.isEmpty(self.user) && !_.isEmpty(self.password)) {
         conn.call('auth', [self.user, self.password], function (err){
-            if (err) {
-              callback(err);
-            } else {
-              callback(null, conn);
-            }
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, conn);
           }
-        );
+        });
         return;
       }
 
@@ -156,24 +157,26 @@ var Client = Endpoint.define('Client', {
             connection.emit('call:' + decoded.method, decoded);
           }
         };
-        // Handle headers
-        connection.res.once('data', function (data){
-          if (connection.res.statusCode === 200) {
-            callback(null, connection);
-          } else {
-            callback(new Error('"' + connection.res.statusCode + '"' + data));
-          }
-        });
-        connection.res.on('data', function (chunk){
-          try {
-            parser.write(chunk);
-          } catch (err) {
-            // TODO: Is ignoring invalid data the right thing to do?
-          }
-        });
-        connection.res.on('end', function (){
-          // TODO: Issue an error if there has been no valid response message
-        });
+        if (response) {
+          // Handle headers
+          connection.res.once('data', function (data){
+            if (connection.res.statusCode === 200) {
+              callback(null, connection);
+            } else {
+              callback(new Error('"' + connection.res.statusCode + '"' + data));
+            }
+          });
+          connection.res.on('data', function (chunk){
+            try {
+              parser.write(chunk);
+            } catch (err) {
+              // TODO: Is ignoring invalid data the right thing to do?
+            }
+          });
+          connection.res.on('end', function (){
+            // TODO: Issue an error if there has been no valid response message
+          });
+        }
       }
     });
   },

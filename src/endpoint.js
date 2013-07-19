@@ -13,6 +13,7 @@ var Endpoint = EventEmitter.define('Endpoint', {
     this.scopes = {};
     this.defaultScope = this;
     this.exposeModule = this.expose;
+    this.$super();
   },
   /**
    * Define a callable method on this RPC endpoint
@@ -49,7 +50,7 @@ var Endpoint = EventEmitter.define('Endpoint', {
       decoded.method + '(' + decoded.params.join(', ') + ')');
 
     if (!this.functions.hasOwnProperty(decoded.method)) {
-      callback(new Error('Unknown RPC call ' + decoded.method + ''));
+      callback(new Error('Unknown RPC call "' + decoded.method + '"'));
       return;
     }
 

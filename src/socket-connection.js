@@ -31,7 +31,9 @@ var SocketConnection = Connection.define('SocketConnection', {
     this.conn.on('close', function (hadError){
       self.emit('close', hadError);
 
-      if (self.endpoint.$className === 'Client' && self.autoReconnect && !self.ended) {
+      if (typeof(self.endpoint) !== 'undefined' && typeof(self.endpoint['$className']) !== 'undefined' &&
+        self.endpoint.$className === 'Client' && self.autoReconnect && !self.ended
+        ) {
         if (hadError) {
           // If there was an error, we'll wait a moment before retrying
           setTimeout(self.reconnect.bind(self), 200);
@@ -40,6 +42,8 @@ var SocketConnection = Connection.define('SocketConnection', {
         }
       }
     });
+
+    this.$super();
   },
   write    : function (data){
     if (!this.conn.writable) {
@@ -57,7 +61,10 @@ var SocketConnection = Connection.define('SocketConnection', {
 
   reconnect: function reconnect(){
     this.ended = false;
-    if (this.endpoint.$className === 'Client') {
+    if (typeof(this.endpoint) !== 'undefined' &&
+      typeof(this.endpoint['$className']) !== 'undefined' &&
+      this.endpoint.$className === 'Client'
+      ) {
       this.conn.connect(this.endpoint.port, this.endpoint.host);
     } else {
       throw new Error('Cannot reconnect a connection from the server-side.');

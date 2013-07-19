@@ -9,6 +9,8 @@ var Connection = EventEmitter.define('Connection', {
     // Default error handler (prevents ''uncaught error event'')
     this.on('error', function (){
     });
+
+    this.$super();
   },
   /**
    * Make a standard RPC call to the other endpoint.

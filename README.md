@@ -20,7 +20,7 @@ Firing up an efficient JSON-RPC server becomes extremely simple:
 ``` javascript
 var rpc = require('json-rpc2');
 
-var server = new rpc.Server();
+var server = rpc.Server.create();
 
 function add(args, opt, callback) {
   callback(null, args[0] + args[1]);
@@ -36,7 +36,7 @@ And creating a client to speak to that server is easy too:
 var rpc = require('json-rpc2');
 var util = require('util');
 
-var client = new rpc.Client(8000, 'localhost');
+var client = rpc.Client.create(8000, 'localhost');
 
 client.call('add', [1, 2], function(err, result) {
     util.puts('1 + 2 = ' + result);

@@ -1,15 +1,16 @@
 'use strict';
 
-var net = require('net');
-var http = require('http');
-var JsonParser = require('jsonparse');
+var
+  net = require('net'),
+  http = require('http'),
+  JsonParser = require('jsonparse'),
 
-var UNAUTHORIZED = 'Unauthorized\n';
-var METHOD_NOT_ALLOWED = 'Method Not Allowed\n';
-var INVALID_REQUEST = 'Invalid Request\n';
+  UNAUTHORIZED = 'Unauthorized\n',
+  METHOD_NOT_ALLOWED = 'Method Not Allowed\n',
+  INVALID_REQUEST = 'Invalid Request\n',
 
-var SocketConnection = require('./socket-connection.js');
-var HttpServerConnection = require('./http-server-connection.js');
+  SocketConnection = require('./socket-connection.js'),
+  HttpServerConnection = require('./http-server-connection.js');
 
 /**
  * JSON-RPC Server.
@@ -18,6 +19,7 @@ var Server = Endpoint.define('Server', {
   construct: function (opts){
     this.opts = opts || {};
     this.opts.type = typeof this.opts.type !== 'undefined' ? this.opts.type : 'http';
+    this.$super();
   },
   /**
    * Start listening to incoming connections.
@@ -45,23 +47,6 @@ var Server = Endpoint.define('Server', {
     Endpoint.trace('***', 'Server (hybrid) listening on socket://' +
       (host || '127.0.0.1') + ':' + port + '/');
     return server;
-  },
-
-  /**
-   * Handle a low level server error.
-   */
-  handleHttpError: function (req, res, code, message){
-    var headers = {'Content-Type': 'text/plain',
-      'Content-Length'           : message.length,
-      'Allow'                    : 'POST'};
-
-    if (code === 401) {
-      headers['WWW-Authenticate'] = 'Basic realm=' + 'JSON-RPC' + '';
-    }
-
-    res.writeHead(code, headers);
-    res.write(message);
-    res.end();
   },
 
   /**
@@ -261,6 +246,23 @@ var Server = Endpoint.define('Server', {
     }
 
     this.authHandler = handler;
+  }
+}, {
+  /**
+   * Handle a low level server error.
+   */
+  handleHttpError: function (req, res, code, message){
+    var headers = {'Content-Type': 'text/plain',
+      'Content-Length'           : message.length,
+      'Allow'                    : 'POST'};
+
+    if (code === 401) {
+      headers['WWW-Authenticate'] = 'Basic realm=' + 'JSON-RPC' + '';
+    }
+
+    res.writeHead(code, headers);
+    res.write(message);
+    res.end();
   }
 });
 

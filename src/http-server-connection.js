@@ -13,12 +13,13 @@ var HttpServerConnection = Connection.define('HttpServerConnection', {
     this.res.connection.on('end', function (){
       self.emit('end');
     });
+    this.$super();
   },
 
   /**
    * Can be called before the response callback to keep the connection open.
    */
-  stream: function (onend){
+  stream: function(onend){
     Connection.prototype.stream.call(this, onend);
 
     this.isStreaming = true;

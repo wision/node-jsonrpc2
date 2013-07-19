@@ -5,19 +5,22 @@ var
   expect = require('expect.js'),
   rpc = require('../src/jsonrpc'),
   events = require('events'),
-  server, MockRequest, MockResponse, testBadRequest, TestModule;
+  server, MockRequest, MockResponse, testBadRequest, TestModule, echo;
 
 module.exports = {
   beforeEach     : function (){
     server = rpc.Server.create();
-
-    //rpc.Endpoint.trace = function (){};
 
     // MOCK REQUEST/RESPONSE OBJECTS
     MockRequest = function (method){
       this.method = method;
       events.EventEmitter.call(this);
     };
+
+    echo = function (args, opts, callback){
+      callback(null, args[0]);
+    };
+    server.expose('echo', echo);
 
     util.inherits(MockRequest, events.EventEmitter);
 
@@ -64,16 +67,13 @@ module.exports = {
   },
   'json-rpc2': {
     'Server.expose': function (){
-      var echo = function (args, opts, callback){
-        callback(null, args[0]);
-      };
-      server.expose('echo', echo);
       expect(server.functions.echo).to.eql(echo);
     },
 
     'Server.exposeModule': function (){
       server.exposeModule('test', TestModule);
       expect(server.functions['test.foo']).to.eql(TestModule.foo);
+      expect(server.functions['test.other']).to.equal(TestModule.other);
     },
 
     'GET Server.handleNonPOST': function (){
@@ -110,7 +110,7 @@ module.exports = {
       expect(res.httpCode).to.equal(200);
       var decoded = JSON.parse(res.httpBody);
       expect(decoded.id).to.equal(1);
-      expect(decoded.error).to.equal('Error: Unknown RPC call \'notRegistered\'');
+      expect(decoded.error).to.equal('Error: Unknown RPC call "notRegistered"');
       expect(decoded.result).to.equal(null);
     },
 

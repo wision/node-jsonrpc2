@@ -12,13 +12,15 @@ var rpc = require('../src/jsonrpc');
 /*
  Connect to HTTP server
  */
-var client = new rpc.Client(8088, 'localhost');
+var client = rpc.Client.create(8088, 'localhost');
 
-client.stream('listen', [], function (err, connection) {
-  if (err) return printError(err);
+client.stream('listen', [], function (err, connection){
+  if (err) {
+    return printError(err);
+  }
   var counter = 0;
-  connection.expose('event', function (params) {
-    console.log('Streaming #'+counter+': '+params[0]);
+  connection.expose('event', function (params){
+    console.log('Streaming #' + counter + ': ' + params[0]);
     counter++;
     if (counter > 4) {
       connection.end();
@@ -30,25 +32,28 @@ client.stream('listen', [], function (err, connection) {
 /*
  Connect to Raw socket server
  */
-var socketClient = new rpc.Client(8089, 'localhost');
+var socketClient = rpc.Client.create(8089, 'localhost');
 
-socketClient.connectSocket(function (err, conn) {
-  if (err) return printError(err);
+socketClient.connectSocket(function (err, conn){
+  if (err) {
+    return printError(err);
+  }
   var counter = 0;
-  socketClient.expose('event', function (params) {
-    console.log('Streaming (socket) #'+counter+': '+params[0]);
+  socketClient.expose('event', function (params){
+    console.log('Streaming (socket) #' + counter + ': ' + params[0]);
     counter++;
     if (counter > 4) {
       conn.end();
     }
   });
 
-  conn.call('listen', [], function (err) {
-    if (err) return printError(err);
+  conn.call('listen', [], function (err){
+    if (err) {
+      return printError(err);
+    }
   });
 });
 
-
-function printError (err) {
-  console.error('RPC Error: '+ err.toString());
+function printError(err){
+  console.error('RPC Error: ' + err.toString());
 }
