@@ -6,6 +6,8 @@ var HttpServerConnection = Connection.define('HttpServerConnection', {
   construct: function (server, req, res){
     var self = this;
 
+    this.$super(server);
+
     this.req = req;
     this.res = res;
     this.isStreaming = false;
@@ -13,8 +15,6 @@ var HttpServerConnection = Connection.define('HttpServerConnection', {
     this.res.connection.on('end', function (){
       self.emit('end');
     });
-
-    this.$super(server);
   },
 
   /**

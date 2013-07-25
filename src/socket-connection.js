@@ -12,8 +12,9 @@ var SocketConnection = Connection.define('SocketConnection', {
   construct: function (endpoint, conn){
     var self = this;
 
+    this.$super(endpoint);
+
     this.conn = conn;
-    this.endpoint = endpoint;
     this.autoReconnect = true;
     this.ended = true;
 
@@ -44,8 +45,6 @@ var SocketConnection = Connection.define('SocketConnection', {
         }
       }
     });
-
-    this.$super(endpoint);
   },
   write    : function (data){
     if (!this.conn.writable) {

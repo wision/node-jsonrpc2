@@ -9,11 +9,12 @@ var debug = require('debug')('jsonrpc');
  */
 var Endpoint = EventEmitter.define('Endpoint', {
   construct : function (){
+    this.$super();
+
     this.functions = {};
     this.scopes = {};
     this.defaultScope = this;
     this.exposeModule = this.expose;
-    this.$super();
   },
   /**
    * Define a callable method on this RPC endpoint

@@ -59,6 +59,7 @@ module.exports = {
     };
   },
   afterEach: function(){
+      server.close();
       server = null;
       MockRequest = null;
       MockResponse = null;

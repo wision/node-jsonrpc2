@@ -12,11 +12,12 @@ var
  */
 var Client = Endpoint.define('Client', {
   construct    : function (port, host, user, password){
+    this.$super();
+
     this.port = port;
     this.host = host;
     this.user = user;
     this.password = password;
-    this.$super();
   },
   /**
    * Make HTTP connection/request.

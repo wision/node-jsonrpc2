@@ -28,9 +28,10 @@ var
  */
 var Server = Endpoint.define('Server', {
   construct: function (opts){
+    this.$super();
+
     this.opts = opts || {};
     this.opts.type = typeof this.opts.type !== 'undefined' ? this.opts.type : 'http';
-    this.$super();
   },
   /**
    * Start listening to incoming connections.
