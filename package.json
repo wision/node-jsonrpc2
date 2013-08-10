@@ -1,6 +1,6 @@
 {
   "name": "json-rpc2",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "JSON-RPC server and client library",
   "main": "./src/jsonrpc.js",
   "keywords": [
@@ -24,7 +24,8 @@
   },
   "contributors": [
     "Bill Casarin <bill@casarin.ca> (jb55.com)",
-    "Stefan Thomas <justmoon@members.fsf.org> (justmoon.net)"
+    "Stefan Thomas <justmoon@members.fsf.org> (justmoon.net)",
+    "Paulo Cesar <email@pocesar.e4ward.com> (github.com/pocesar)"
   ],
   "repository": {
     "type": "git",

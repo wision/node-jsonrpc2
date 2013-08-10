@@ -4,8 +4,7 @@
 
 # node-jsonrpc2
 
-This is a JSON-RPC server and client library for node.js <http://nodejs.org/>,
-the V8 based evented IO framework.
+This is a JSON-RPC 2.0 server and client library for node.js.
 
 This fork is a rewrite with proper testing and linted code, compatible with node >= 0.8
 
@@ -29,21 +28,33 @@ var server = rpc.Server.create();
 function add(args, opt, callback) {
   callback(null, args[0] + args[1]);
 }
+
 server.expose('add', add);
 
-server.listen(8000, 'localhost'); // listen creates an HTTP server
+// you can expose an entire object as well:
+
+server.expose('namespace', {
+    'function1': function(){},
+    'function2': function(){},
+    'function3': function(){}
+});
+// expects calls to be namespace.function1, namespace.function2 and namespace.function3
+
+// listen creates an HTTP server on localhost only
+server.listen(8000, 'localhost');
 ```
 
 And creating a client to speak to that server is easy too:
 
 ```js
 var rpc = require('json-rpc2');
-var util = require('util');
 
 var client = rpc.Client.create(8000, 'localhost');
 
+// Call add function on the server
+
 client.call('add', [1, 2], function(err, result) {
-    util.puts('1 + 2 = ' + result);
+    console.log('1 + 2 = ' + result);
 });
 ```
 
@@ -54,17 +65,83 @@ var rpc = require('json-rpc2');
 
 var server = rpc.Server.create();
 
+// non-standard auth for RPC, when using this module using both client and server, works out-of-the-box
 server.enableAuth('user', 'pass');
 
-server.listenRaw(8080, 'localhost'); // Listen on socket
+// Listen on socket
+server.listenRaw(8080, 'localhost');
+```
 
+## Extend, overwrite, overload
+
+Any class can be extended, or used as a mixin for new classes, since it uses [ES5Class](http://github.com/pocesar/ES5-Class) module.
+
+For example, you may extend the `Endpoint` class, that automatically extends `Client` and `Server` classes.
+Extending `Connection` automatically extends `SocketConnection` and `HttpServerConnection`.
+
+```js
+var rpc = require('json-rpc2');
+
+rpc.Endpoint.include({
+    'newFunction': function(){
+
+    }
+});
+
+var
+    server = rpc.Server.create(),
+    client = rpc.Client.create();
+
+server.newFunction(); // already available
+client.newFunction(); // already available
+```
+
+To implement a new class method (that can be called without an instance, like `rpc.Endpoint.newFunction`:
+
+```js
+var rpc = require('json-rpc2');
+
+rpc.Endpoint.implement({
+    'newFunction': function(){
+    }
+});
+
+rpc.Endpoint.newFunction(); // available
+rpc.Client.newFunction(); // every
+rpc.Server.newFunction(); // where
+```
+
+Don't forget, when you are overloading an existing function, you can call the original function using `$super`
+
+```js
+var rpc = require('json-rpc2');
+
+rpc.Endpoint.implement({
+    'trace': function(direction, message){
+        this.$super(' (' + direction + ')', message); //call the last defined function
+    }
+});
+```
+
+And you can start your classes directly from any of the classes
+
+```js
+var MyCoolServer = require('json-rpc2').Server.define('MyCoolServer', {
+    myOwnFunction: function(){
+    },
+}, {
+    myOwnClassMethod: function(){
+    }
+}); // MyCoolServer will contain all class and instance functions from Server
+
+MyCoolServer.myOwnClassMethod(); // class function
+MyCoolServer.create().myOwnFunction(); // instance function
 ```
 
 ## Debugging
 
 This module uses the [debug](http://github.com/visionmedia/debug) package, to debug it, you need to set the Node
-environment variable to jsonrpc, either inside your program using `program.env.DEBUG='jsonrpc'`
-or setting it in command line as `set DEBUG=jsonrpc` or `export DEBUG=jsonrpc`
+environment variable to jsonrpc, by setting it in command line as `set DEBUG=jsonrpc` or `export DEBUG=jsonrpc`
 
 ## Examples
 
