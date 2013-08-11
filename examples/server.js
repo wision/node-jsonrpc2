@@ -1,12 +1,12 @@
 var rpc = require('../src/jsonrpc');
 
-var server = rpc.Server.create();
+var server = rpc.Server.create({
+  websocket: true
+});
 
 server.on('error', function (err){
   console.log(err);
 });
-
-server.enableAuth('myuser', 'secret123');
 
 /* Expose two simple functions */
 server.expose('add', function (args, opts, callback){
@@ -51,8 +51,16 @@ server.exposeModule('delayed', {
   }
 );
 
-/* HTTP server on port 8088 */
+// or server.enableAuth('myuser', 'secret123');
+server.enableAuth(function(user, password){
+  return user === 'myuser' && password === 'secret123';
+});
+
+/* HTTP/Websocket server on port 8088 */
 server.listen(8088, 'localhost');
 
 /* Raw socket server on port 8089 */
 server.listenRaw(8089, 'localhost');
+
+/* can handle everything in one port using */
+// server.listenHybrid(8888, 'localhost');

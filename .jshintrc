@@ -11,14 +11,5 @@
   "devel"   : true,
   "node"    : true,
   "sub"     : true,
-  "quotmark": "single",
-  "globals" : {
-    "_"           : true,
-    "_l"          : true,
-    "Endpoint"    : true,
-    "ES5Class"    : true,
-    "EventEmitter": true,
-    "util"        : true,
-    "events"      : true
-  }
+  "quotmark": "single"
 }

@@ -1,4 +1,5 @@
-var rpc = require('../src/jsonrpc');
+var
+  rpc = require('../src/jsonrpc');
 
 /*
  Connect to HTTP server
@@ -57,6 +58,39 @@ socketClient.connectSocket(function (err, conn){
       return printError(err);
     }
     console.log('  ' + result + ' (socket)');
+  });
+});
+
+/*
+ Connect to Websocket server
+ */
+var WebsocketClient = rpc.Client.create(8088, 'localhost', 'myuser', 'secret123');
+
+WebsocketClient.connectWebsocket(function (err, conn){
+  if (err) {
+    return printError(err);
+  }
+  // Accessing modules is as simple as dot-prefixing.
+  conn.call('math.power', [64, 2], function (err, result){
+    if (err) {
+      return printError(err);
+    }
+    console.log('  64 ^ 2 = ' + result + ' (websocket)');
+  });
+
+  // These calls should each take 1 seconds to complete
+  conn.call('delayed.add', [155, 155, 4000], function (err, result){
+    if (err) {
+      return printError(err);
+    }
+    console.log('  155 + 155 = ' + result + ', delay 4000 ms (websocket)');
+  });
+
+  conn.call('delayed.echo', ['echo back 0 timeout', 0], function (err, result){
+    if (err) {
+      return printError(err);
+    }
+    console.log('  ' + result + ' (websocket)');
   });
 });
 

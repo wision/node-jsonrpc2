@@ -1,73 +1,78 @@
-'use strict';
+module.exports = function (classes){
+  'use strict';
 
-var Connection = require('./connection.js');
+  var
+    Connection = classes.Connection,
 
-/**
- * Socket connection.
- *
- * Socket connections are mostly symmetric, so we are using a single class for
- * representing both the server and client perspective.
- */
-var SocketConnection = Connection.define('SocketConnection', {
-  construct: function (endpoint, conn){
-    var self = this;
+    /**
+     * Socket connection.
+     *
+     * Socket connections are mostly symmetric, so we are using a single class for
+     * representing both the server and client perspective.
+     */
+      SocketConnection = Connection.define('SocketConnection', {
+      construct: function (endpoint, conn){
+        var self = this;
 
-    this.$super(endpoint);
+        self.$super(endpoint);
 
-    this.conn = conn;
-    this.autoReconnect = true;
-    this.ended = true;
+        self.conn = conn;
+        self.autoReconnect = true;
+        self.ended = true;
 
-    this.conn.on('connect', function (){
-      self.emit('connect');
-    });
+        self.conn.on('connect', function (){
+          self.emit('connect');
+        });
 
-    this.conn.on('end', function (){
-      self.emit('end');
-    });
+        self.conn.on('end', function (){
+          self.emit('end');
+        });
 
-    this.conn.on('error', function (){
-      self.emit('error');
-    });
+        self.conn.on('error', function (event){
+          self.emit('error', event);
+        });
 
-    this.conn.on('close', function (hadError){
-      self.emit('close', hadError);
+        self.conn.on('close', function (hadError){
+          self.emit('close', hadError);
 
-      if (
-          self.endpoint.$className === 'Client' &&
-          self.autoReconnect && !self.ended
-        ) {
-        if (hadError) {
-          // If there was an error, we'll wait a moment before retrying
-          setTimeout(self.reconnect.bind(self), 200);
+          if (
+            self.endpoint.$className === 'Client' &&
+              self.autoReconnect && !self.ended
+            ) {
+            if (hadError) {
+              // If there was an error, we'll wait a moment before retrying
+              setTimeout(function(){
+                self.reconnect();
+              }, 200);
+            } else {
+              self.reconnect();
+            }
+          }
+        });
+      },
+      write    : function (data){
+        if (!this.conn.writable) {
+          // Other side disconnected, we'll quietly fail
+          return;
+        }
+
+        this.conn.write(data);
+      },
+
+      end: function (){
+        this.ended = true;
+        this.conn.end();
+      },
+
+      reconnect: function (){
+        this.ended = false;
+        if (this.endpoint.$className === 'Client') {
+          this.conn.connect(this.endpoint.port, this.endpoint.host);
         } else {
-          self.reconnect();
+          throw new Error('Cannot reconnect a connection from the server-side.');
         }
       }
     });
-  },
-  write    : function (data){
-    if (!this.conn.writable) {
-      // Other side disconnected, we'll quietly fail
-      return;
-    }
 
-    this.conn.write(data);
-  },
-
-  end: function (){
-    this.ended = true;
-    this.conn.end();
-  },
-
-  reconnect: function (){
-    this.ended = false;
-    if (this.endpoint.$className === 'Client') {
-      this.conn.connect(this.endpoint.port, this.endpoint.host);
-    } else {
-      throw new Error('Cannot reconnect a connection from the server-side.');
-    }
-  }
-});
-
-module.exports = SocketConnection;
+  return SocketConnection;
+};

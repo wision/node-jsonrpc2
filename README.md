@@ -4,9 +4,9 @@
 
 # node-jsonrpc2
 
-This is a JSON-RPC 2.0 server and client library for node.js.
+JSON-RPC 2.0 server and client library, with `HTTP` (with `Websocket` support) and `TCP` endpoints
 
-This fork is a rewrite with proper testing and linted code, compatible with node >= 0.8
+This fork is a rewrite with proper testing framework, linted code, compatible with node >= 0.8, class inheritance, and added functionalities
 
 ## Install
 
@@ -23,7 +23,9 @@ Firing up an efficient JSON-RPC server becomes extremely simple:
 ```js
 var rpc = require('json-rpc2');
 
-var server = rpc.Server.create();
+var server = rpc.Server.create({
+    'websocket': true // is true by default
+});
 
 function add(args, opt, callback) {
   callback(null, args[0] + args[1]);

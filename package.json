@@ -1,23 +1,29 @@
 {
   "name": "json-rpc2",
-  "version": "0.2.7",
-  "description": "JSON-RPC server and client library",
+  "version": "0.3.0",
+  "description": "JSON-RPC 2.0 server and client library, with HTTP, TCP and Websocket endpoints",
   "main": "./src/jsonrpc.js",
   "keywords": [
     "json",
     "rpc",
     "rpc2",
     "json-rpc",
+    "json-rpc2",
     "jsonrpc",
+    "jsonrpc2",
     "server",
-    "client"
+    "client",
+    "tcp",
+    "websocket",
+    "http"
   ],
   "author": "Eric Florenzano <floguy@gmail.com> (eflorenzano.com)",
   "dependencies": {
-    "jsonparse": ">=0.0.1",
+    "jsonparse": "*",
     "debug": "*",
     "lodash": "*",
-    "es5class": "*"
+    "es5class": "*",
+    "faye-websocket": "~0.6.1"
   },
   "engines": {
     "node": ">=0.8.0"
@@ -32,8 +38,6 @@
     "url": "git://github.com/pocesar/node-jsonrpc2.git"
   },
   "devDependencies": {
-    "async": "~0.2.5",
-    "underscore": "~1.4.4",
     "mocha": "*",
     "expect.js": "*",
     "jshint": "*"
