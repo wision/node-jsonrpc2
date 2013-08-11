@@ -54,7 +54,6 @@ module.exports = function (classes){
           server = http.createServer();
 
         server.on('request', function (req, res){
-          console.log('ASDGFASDGA');
           self.handleHttp(req, res);
         });
 
