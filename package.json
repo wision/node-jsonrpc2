@@ -1,6 +1,6 @@
 {
   "name": "json-rpc2",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "JSON-RPC 2.0 server and client library, with HTTP, TCP and Websocket endpoints",
   "main": "./src/jsonrpc.js",
   "keywords": [
@@ -23,7 +23,7 @@
     "debug": "*",
     "lodash": "*",
     "es5class": "*",
-    "faye-websocket": "~0.6.1"
+    "faye-websocket": "*"
   },
   "engines": {
     "node": ">=0.8.0"

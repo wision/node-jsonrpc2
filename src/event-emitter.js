@@ -27,7 +27,7 @@ module.exports = function (classes){
       '-32602': 'Invalid params',
       '-32603': 'Internal error'
     }
-  }).implement(require('events').EventEmitter);
+  }).implement(require('events').EventEmitter, true);
 
   return EventEmitter;
 };
