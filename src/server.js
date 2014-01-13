@@ -148,7 +148,7 @@ module.exports = function (classes){
 
             if (!conn.isStreaming) {
               res.writeHead(200, {'Content-Type': 'application/json',
-                'Content-Length'                : encoded.length});
+                'Content-Length'                : Buffer.byteLength(encoded,'utf-8')});
               res.write(encoded);
               res.end();
             } else {
