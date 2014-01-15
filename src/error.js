@@ -7,10 +7,10 @@ var util = require('util');
  */
 
 
-var AbstractError = function AbstractError(message) {
+var AbstractError = function AbstractError() {
   Error.call(this);
   Error.captureStackTrace(this, this.constructor);
-}
+};
 util.inherits(AbstractError, Error);
 
 var ParseError = function ParseError(message) {
@@ -19,7 +19,7 @@ var ParseError = function ParseError(message) {
   this.name = this.constructor.name;
   this.message = message || this.constructor.name;
   this.code = -32700;
-}
+};
 util.inherits(ParseError, AbstractError);
 
 var InvalidRequest = function InvalidRequest(message) {
@@ -28,7 +28,7 @@ var InvalidRequest = function InvalidRequest(message) {
   this.name = this.constructor.name;
   this.message = message || this.constructor.name;
   this.code = -32600;
-}
+};
 util.inherits(InvalidRequest, AbstractError);
 
 var MethodNotFound = function MethodNotFound(message) {
@@ -37,7 +37,7 @@ var MethodNotFound = function MethodNotFound(message) {
   this.name = this.constructor.name;
   this.message = message || this.constructor.name;
   this.code = -32601;
-}
+};
 util.inherits(MethodNotFound, AbstractError);
 
 var InvalidParams = function InvalidParams(message) {
@@ -46,7 +46,7 @@ var InvalidParams = function InvalidParams(message) {
   this.name = this.constructor.name;
   this.message = message || this.constructor.name;
   this.code = -32602;
-}
+};
 util.inherits(InvalidParams, AbstractError);
 
 var InternalError = function InternalError(message) {
@@ -55,7 +55,7 @@ var InternalError = function InternalError(message) {
   this.name = this.constructor.name;
   this.message = message || this.constructor.name;
   this.code = -32603;
-}
+};
 util.inherits(InternalError, AbstractError);
 
 var ServerError = function ServerError(message) {
@@ -64,7 +64,7 @@ var ServerError = function ServerError(message) {
   this.name = this.constructor.name;
   this.message = message || this.constructor.name;
   this.code = -32000;
-}
+};
 util.inherits(ServerError, AbstractError);
 
 module.exports.AbstractError = AbstractError;
