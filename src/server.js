@@ -176,7 +176,7 @@ module.exports = function (classes) {
               response = {
                 'jsonrpc': '2.0',
                 'error': {code: err.code, message: err.message }
-              }
+              };
 
             } else {
               Endpoint.trace('-->', 'Response (id ' + decoded.id + '): ' +
@@ -184,14 +184,14 @@ module.exports = function (classes) {
               response = {
                 'jsonrpc': '2.0',
                 'result': result || null
-              }
+              };
             }
             // Don't return a message if it doesn't have an ID
             if (Endpoint.hasId(decoded)) {
               response.id = decoded.id;
               reply(response);
             }
-          }
+          };
 
 
           var conn = classes.HttpServerConnection.create(self, req, res);
@@ -344,7 +344,7 @@ module.exports = function (classes) {
           'jsonrpc': '2.0',
           'error': {code: error.code, message: error.message},
           'id': null
-        })
+        });
         var headers = {'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(message),
           'Allow': 'POST'};
