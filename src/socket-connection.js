@@ -10,7 +10,7 @@ module.exports = function (classes){
      * Socket connections are mostly symmetric, so we are using a single class for
      * representing both the server and client perspective.
      */
-      SocketConnection = Connection.define('SocketConnection', {
+      SocketConnection = Connection.$define('SocketConnection', {
       construct: function (endpoint, conn){
         var self = this;
 
@@ -20,28 +20,28 @@ module.exports = function (classes){
         self.autoReconnect = true;
         self.ended = true;
 
-        self.conn.on('connect', function (){
+        self.conn.on('connect', function socketConnect(){
           self.emit('connect');
         });
 
-        self.conn.on('end', function (){
+        self.conn.on('end', function socketEnd(){
           self.emit('end');
         });
 
-        self.conn.on('error', function (event){
+        self.conn.on('error', function socketError(event){
           self.emit('error', event);
         });
 
-        self.conn.on('close', function (hadError){
+        self.conn.on('close', function socketClose(hadError){
           self.emit('close', hadError);
 
           if (
-            self.endpoint.$className === 'Client' &&
+            self.endpoint.$class.$className === 'Client' &&
               self.autoReconnect && !self.ended
             ) {
             if (hadError) {
               // If there was an error, we'll wait a moment before retrying
-              setTimeout(function(){
+              setTimeout(function reconnectTimeout(){
                 self.reconnect();
               }, 200);
             } else {
@@ -66,7 +66,7 @@ module.exports = function (classes){
 
       reconnect: function (){
         this.ended = false;
-        if (this.endpoint.$className === 'Client') {
+        if (this.endpoint.$class.$className === 'Client') {
           this.conn.connect(this.endpoint.port, this.endpoint.host);
         } else {
           throw new Error('Cannot reconnect a connection from the server-side.');

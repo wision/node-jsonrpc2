@@ -3,7 +3,7 @@ module.exports = function (classes){
 
   var
     Connection = classes.Connection,
-    HttpServerConnection = Connection.define('HttpServerConnection', {
+    HttpServerConnection = Connection.$define('HttpServerConnection', {
     construct: function (server, req, res){
       var self = this;
 
@@ -13,7 +13,7 @@ module.exports = function (classes){
       this.res = res;
       this.isStreaming = false;
 
-      this.res.connection.on('end', function (){
+      this.res.connection.on('end', function responseEnd(){
         self.emit('end');
       });
     },

@@ -10,7 +10,7 @@ module.exports = function (classes){
      * Socket connections are mostly symmetric, so we are using a single class for
      * representing both the server and client perspective.
      */
-      WebSocketConnection = Connection.define('WebSocketConnection', {
+      WebSocketConnection = Connection.$define('WebSocketConnection', {
       construct: function (endpoint, conn){
         var self = this;
 
@@ -19,7 +19,7 @@ module.exports = function (classes){
         self.conn = conn;
         self.ended = false;
 
-        self.conn.on('close', function (hadError){
+        self.conn.on('close', function websocketClose(hadError){
           self.emit('close', hadError);
         });
       },

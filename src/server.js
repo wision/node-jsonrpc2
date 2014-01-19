@@ -17,7 +17,7 @@ module.exports = function (classes) {
     /**
      * JSON-RPC Server.
      */
-      Server = Endpoint.define('Server', {
+      Server = Endpoint.$define('Server', {
       construct: function (opts) {
         this.$super();
 
@@ -55,7 +55,7 @@ module.exports = function (classes) {
           self = this,
           server = http.createServer();
 
-        server.on('request', function (req, res) {
+        server.on('request', function onRequest(req, res) {
           self.handleHttp(req, res);
         });
 
@@ -66,7 +66,7 @@ module.exports = function (classes) {
         }
 
         if (this.opts.websocket === true) {
-          server.on('upgrade', function (req, socket, body) {
+          server.on('upgrade', function onUpgrade(req, socket, body) {
             if (WebSocket.isWebSocket(req)) {
               if (self._checkAuth(req, socket)) {
                 self.handleWebsocket(req, socket, body);
@@ -81,7 +81,7 @@ module.exports = function (classes) {
       listenRaw: function (port, host) {
         var
           self = this,
-          server = net.createServer(function (socket) {
+          server = net.createServer(function createServer(socket) {
             self.handleRaw(socket);
           });
 
@@ -97,7 +97,7 @@ module.exports = function (classes) {
         var
           self = this,
           httpServer = self.listen(),
-          server = net.createServer(function (socket) {
+          server = net.createServer(function createServer(socket) {
             self.handleHybrid(httpServer, socket);
           });
 
@@ -126,7 +126,7 @@ module.exports = function (classes) {
           return;
         }
 
-        var handle = function (buf) {
+        var handle = function handle(buf) {
           // Check if json is valid JSON document
           var decoded;
 
@@ -145,7 +145,7 @@ module.exports = function (classes) {
             return;
           }
 
-          var reply = function (json) {
+          var reply = function reply(json) {
             var encoded = JSON.stringify(json);
 
             if (!conn.isStreaming) {
@@ -160,7 +160,7 @@ module.exports = function (classes) {
             }
           };
 
-          var callback = function (err, result) {
+          var callback = function callback(err, result) {
             var response;
             if (err) {
 
@@ -194,16 +194,16 @@ module.exports = function (classes) {
           };
 
 
-          var conn = classes.HttpServerConnection.create(self, req, res);
+          var conn = new classes.HttpServerConnection(self, req, res);
 
           self.handleCall(decoded, conn, callback);
         }; // function handle(buf)
 
-        req.on('data', function (chunk) {
+        req.on('data', function requestData(chunk) {
           buffer = buffer + chunk;
         });
 
-        req.on('end', function () {
+        req.on('end', function requestEnd() {
           handle(buffer);
         });
       },
@@ -213,7 +213,7 @@ module.exports = function (classes) {
 
         Endpoint.trace('<--', 'Accepted socket connection');
 
-        conn = classes.SocketConnection.create(self, socket);
+        conn = new classes.SocketConnection(self, socket);
         parser = new JsonParser();
         requireAuth = !!this.authHandler;
 
@@ -275,7 +275,7 @@ module.exports = function (classes) {
 
         Endpoint.trace('<--', 'Accepted Websocket connection');
 
-        conn = classes.WebSocketConnection.create(self, socket);
+        conn = new classes.WebSocketConnection(self, socket);
         parser = new JsonParser();
 
         parser.onValue = function (decoded) {

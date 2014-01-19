@@ -3,7 +3,7 @@
 exports._ = require('lodash');
 exports.ES5Class = require('es5class');
 exports.Websocket = require('faye-websocket');
-exports.Error = require('./error.js');
+exports.Error = require('./error.js')(exports);
 
 exports.EventEmitter = require('./event-emitter.js')(exports);
 

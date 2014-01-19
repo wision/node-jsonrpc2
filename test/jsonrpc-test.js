@@ -90,16 +90,16 @@ module.exports = {
       TestModule = null;
   },
   'json-rpc2': {
-    'Server#expose': function (){
+    'Server expose': function (){
       expect(server.functions.echo).to.eql(echo);
     },
 
-    'Server#exposeModule': function (){
+    'Server exposeModule': function (){
       server.exposeModule('test', TestModule);
       expect(server.functions['test.foo']).to.eql(TestModule.foo);
     },
 
-    'GET Server#handleNonPOST': function (){
+    'GET Server handle NonPOST': function (){
       var req = new MockRequest('GET');
       var res = new MockResponse();
       server.handleHttp(req, res);

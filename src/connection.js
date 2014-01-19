@@ -4,7 +4,7 @@ module.exports = function (classes){
   var
     _ = classes._,
     EventEmitter = classes.EventEmitter,
-    Connection = EventEmitter.define('Connection', {
+    Connection = EventEmitter.$define('Connection', {
       construct: function (ep){
         this.$super();
 
@@ -83,7 +83,7 @@ module.exports = function (classes){
             }
           } else if (msg.hasOwnProperty('method')) {
             // Are we in the server?
-            this.endpoint.handleCall(msg, this, function (err, result){
+            this.endpoint.handleCall(msg, this, function handleCall(err, result){
               if (err) {
                 if (self.listeners('error').length) {
                   self.emit('error', err);

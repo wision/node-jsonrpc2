@@ -1,76 +1,60 @@
-'use strict';
+module.exports = function (classes){
+  'use strict';
 
-var util = require('util');
+  /*
+   JSON-RPC 2.0 Specification Errors codes by dcharbonnier 
+   */
+  var Errors = {};
 
-/*
- JSON-RPC 2.0 Specification Errors codes
- */
+  Errors.AbstractError = classes.ES5Class.$define('AbstractError', {
+    construct: function(message){
+      this.name = this.$class.$className;
+      this.message = message || this.$class.$className;
+      Error.captureStackTrace(this, this.$class);
+    }
+  }).$implement(Error, true);
 
+  Errors.ParseError = Errors.AbstractError.$define('ParseError', {
+    construct: function(message) {
+      this.$super(message);
+      this.code = -32700;
+    }
+  });
 
-var AbstractError = function AbstractError() {
-  Error.call(this);
-  Error.captureStackTrace(this, this.constructor);
+  Errors.InvalidRequest = Errors.AbstractError.$define('InvalidRequest', {
+    construct: function(message){
+      this.$super(message);
+      this.code = -32600;
+    }
+  });
+
+  Errors.MethodNotFound = Errors.AbstractError.$define('MethodNotFound', {
+    construct: function(message) {
+      this.$super(message);
+      this.code = -32601;
+    }
+  });
+
+  Errors.InvalidParams = Errors.AbstractError.$define('InvalidParams', {
+    construct: function(message) {
+      this.$super(message);
+      this.code = -32602;
+    }
+  });
+
+  Errors.InternalError = Errors.AbstractError.$define('InternalError', {
+    construct: function(message) {
+      this.$super(message);
+      this.code = -32603;
+    }
+  });
+
+  Errors.ServerError = Errors.AbstractError.$define('ServerError', {
+    construct: function(message) {
+      this.$super(message);
+      this.code = -32000;
+    }
+  });
+
+  return Errors;
 };
-util.inherits(AbstractError, Error);
-
-var ParseError = function ParseError(message) {
-  Error.call(this);
-  Error.captureStackTrace(this, this.constructor);
-  this.name = this.constructor.name;
-  this.message = message || this.constructor.name;
-  this.code = -32700;
-};
-util.inherits(ParseError, AbstractError);
-
-var InvalidRequest = function InvalidRequest(message) {
-  Error.call(this);
-  Error.captureStackTrace(this, this.constructor);
-  this.name = this.constructor.name;
-  this.message = message || this.constructor.name;
-  this.code = -32600;
-};
-util.inherits(InvalidRequest, AbstractError);
-
-var MethodNotFound = function MethodNotFound(message) {
-  Error.call(this);
-  Error.captureStackTrace(this, this.constructor);
-  this.name = this.constructor.name;
-  this.message = message || this.constructor.name;
-  this.code = -32601;
-};
-util.inherits(MethodNotFound, AbstractError);
-
-var InvalidParams = function InvalidParams(message) {
-  Error.call(this);
-  Error.captureStackTrace(this, this.constructor);
-  this.name = this.constructor.name;
-  this.message = message || this.constructor.name;
-  this.code = -32602;
-};
-util.inherits(InvalidParams, AbstractError);
-
-var InternalError = function InternalError(message) {
-  Error.call(this);
-  Error.captureStackTrace(this, this.constructor);
-  this.name = this.constructor.name;
-  this.message = message || this.constructor.name;
-  this.code = -32603;
-};
-util.inherits(InternalError, AbstractError);
-
-var ServerError = function ServerError(message) {
-  Error.call(this);
-  Error.captureStackTrace(this, this.constructor);
-  this.name = this.constructor.name;
-  this.message = message || this.constructor.name;
-  this.code = -32000;
-};
-util.inherits(ServerError, AbstractError);
-
-module.exports.AbstractError = AbstractError;
-module.exports.ParseError = ParseError;
-module.exports.InvalidRequest = InvalidRequest;
-module.exports.MethodNotFound = MethodNotFound;
-module.exports.InvalidParams = InvalidParams;
-module.exports.InternalError = InternalError;
-module.exports.ServerError = ServerError;
