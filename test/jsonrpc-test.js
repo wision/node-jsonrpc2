@@ -1,10 +1,8 @@
 'use strict';
 
 var
-  util = require('util'),
   expect = require('expect.js'),
   rpc = require('../src/jsonrpc'),
-  events = require('events'),
   server, MockRequest, MockResponse, testBadRequest, TestModule, echo;
 
 module.exports = {
@@ -12,10 +10,12 @@ module.exports = {
     server = rpc.Server.create();
 
     // MOCK REQUEST/RESPONSE OBJECTS
-    MockRequest = function (method){
-      this.method = method;
-      events.EventEmitter.call(this);
-    };
+    MockRequest = rpc.EventEmitter.$define('MockRequest', {
+      construct: function(method){
+        this.$super();
+        this.method = method;
+      }
+    });
 
     echo = function (args, opts, callback){
       callback(null, args[0]);
@@ -43,22 +43,22 @@ module.exports = {
 
     server.expose('javascript_error', javascript_error);
 
-    util.inherits(MockRequest, events.EventEmitter);
+    MockResponse = rpc.EventEmitter.$define('MockResponse', {
+      construct: function(){
+        this.$super();
 
-    MockResponse = function (){
-      events.EventEmitter.call(this);
-      this.writeHead = this.sendHeader = function (httpCode){
-        this.httpCode = httpCode;
-        this.httpHeaders = httpCode;
-      };
-      this.write = this.sendBody = function (httpBody){
-        this.httpBody = httpBody;
-      };
-      this.end = this.finish = function (){};
-      this.connection = new events.EventEmitter();
-    };
+        this.writeHead = this.sendHeader = function (httpCode){
+          this.httpCode = httpCode;
+          this.httpHeaders = httpCode;
+        };
+        this.write = this.sendBody = function (httpBody){
+          this.httpBody = httpBody;
+        };
+        this.end = this.finish = function (){};
+        this.connection = new rpc.EventEmitter();
+      }
+    });
 
-    util.inherits(MockResponse, events.EventEmitter);
 
     // A SIMPLE MODULE
     TestModule = {

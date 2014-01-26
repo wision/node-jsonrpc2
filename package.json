@@ -1,6 +1,6 @@
 {
   "name": "json-rpc2",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "JSON-RPC 2.0 server and client library, with HTTP, TCP and Websocket endpoints",
   "main": "./src/jsonrpc.js",
   "keywords": [
@@ -23,7 +23,8 @@
     "debug": "*",
     "lodash": "*",
     "es5class": "*",
-    "faye-websocket": "*"
+    "faye-websocket": "*",
+    "eventemitter3": "*"
   },
   "engines": {
     "node": ">=0.8.0"
@@ -40,9 +41,11 @@
   "devDependencies": {
     "mocha": "*",
     "expect.js": "*",
-    "jshint": "*"
+    "jshint": "*",
+    "istanbul": "*"
   },
   "scripts": {
-    "test": "jshint examples src test && mocha test/*.js"
+    "test": "jshint examples src test && mocha test/*.js",
+    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -t 5000 test/jsonrpc-test.js"
   }
 }

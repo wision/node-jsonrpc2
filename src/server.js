@@ -164,9 +164,8 @@ module.exports = function (classes) {
             var response;
             if (err) {
 
-              if (self.listeners('error').length) {
-                self.emit('error', err);
-              }
+              self.emit('error', err);
+
               Endpoint.trace('-->', 'Failure (id ' + decoded.id + '): ' +
                 (err.stack ? err.stack : err.toString()));
               result = null;

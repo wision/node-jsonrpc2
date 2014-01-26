@@ -4,7 +4,7 @@ var events = require('events');
 var server = rpc.Server.create();
 
 server.on('error', function (err){
-  console.log(err);
+  console.log(err.toString());
 });
 
 // Create a message bus with random events on it
