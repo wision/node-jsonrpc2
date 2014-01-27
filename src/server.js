@@ -346,6 +346,7 @@ module.exports = function (classes) {
         });
         var headers = {'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(message),
+          'Access-Control-Allow-Headers': 'Content-Type',
           'Allow': 'POST'};
 
         /*if (code === 401) {
