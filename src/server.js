@@ -4,6 +4,7 @@ module.exports = function (classes) {
   var
     net = require('net'),
     http = require('http'),
+    extend = require('util')._extend,
     JsonParser = require('jsonparse'),
 
     UNAUTHORIZED = 'Unauthorized',
@@ -23,6 +24,7 @@ module.exports = function (classes) {
 
         this.opts = opts || {};
         this.opts.type = typeof this.opts.type !== 'undefined' ? this.opts.type : 'http';
+        this.opts.headers = this.opts.headers || {};
         this.opts.websocket = typeof this.opts.websocket !== 'undefined' ? this.opts.websocket : true;
       },
       _checkAuth: function (req, res) {
@@ -40,7 +42,7 @@ module.exports = function (classes) {
           if (!this.authHandler(username, password)) {
             if (res) {
               classes.EventEmitter.trace('<--', 'Unauthorized request');
-              Server.handleHttpError(req, res, new Error.InvalidParams(UNAUTHORIZED));
+              Server.handleHttpError(req, res, new Error.InvalidParams(UNAUTHORIZED), self.opts.headers);
             }
             return false;
           }
@@ -122,7 +124,7 @@ module.exports = function (classes) {
         Endpoint.trace('<--', 'Accepted http request');
 
         if (req.method !== 'POST') {
-          Server.handleHttpError(req, res, new Error.InvalidRequest(METHOD_NOT_ALLOWED));
+          Server.handleHttpError(req, res, new Error.InvalidRequest(METHOD_NOT_ALLOWED), self.opts.headers);
           return;
         }
 
@@ -133,7 +135,7 @@ module.exports = function (classes) {
           try {
             decoded = JSON.parse(buf);
           } catch (error) {
-            Server.handleHttpError(req, res, new Error.ParseError(INVALID_REQUEST));
+            Server.handleHttpError(req, res, new Error.ParseError(INVALID_REQUEST), self.opts.headers);
             return;
           }
 
@@ -141,7 +143,7 @@ module.exports = function (classes) {
           // dispatch to the handleHttpError function.
           if (!(decoded.method && decoded.params && decoded.id)) {
             Endpoint.trace('-->', 'Response (invalid request)');
-            Server.handleHttpError(req, res, new Error.InvalidRequest(INVALID_REQUEST));
+            Server.handleHttpError(req, res, new Error.InvalidRequest(INVALID_REQUEST), self.opts.headers);
             return;
           }
 
@@ -149,12 +151,12 @@ module.exports = function (classes) {
             var encoded = JSON.stringify(json);
 
             if (!conn.isStreaming) {
-              res.writeHead(200, {'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(encoded, 'utf-8')});
+              res.writeHead(200, extend(self.opts.headers, {'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(encoded, 'utf-8')}));
               res.write(encoded);
               res.end();
             } else {
-              res.writeHead(200, {'Content-Type': 'application/json'});
+              res.writeHead(200, extend(self.opts.headers, {'Content-Type': 'application/json'}));
               res.write(encoded);
               // Keep connection open
             }
@@ -338,16 +340,17 @@ module.exports = function (classes) {
       /**
        * Handle a low level server error.
        */
-      handleHttpError: function (req, res, error) {
+      handleHttpError: function (req, res, error, custom_headers) {
         var message = JSON.stringify({
           'jsonrpc': '2.0',
           'error': {code: error.code, message: error.message},
           'id': null
         });
-        var headers = {'Content-Type': 'application/json',
+        custom_headers = custom_headers || {};
+        var headers = extend(custom_headers, {'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(message),
           'Access-Control-Allow-Headers': 'Content-Type',
-          'Allow': 'POST'};
+          'Allow': 'POST'});
 
         /*if (code === 401) {
          headers['WWW-Authenticate'] = 'Basic realm=' + 'JSON-RPC' + '';

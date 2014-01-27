@@ -25,6 +25,9 @@ var rpc = require('json-rpc2');
 
 var server = rpc.Server.create({
     'websocket': true // is true by default
+    'headers': { // allow custom headers is empty by default
+        'Access-Control-Allow-Origin': '*'
+    }
 });
 
 function add(args, opt, callback) {
