@@ -6,7 +6,7 @@
 
 JSON-RPC 2.0 server and client library, with `HTTP` (with `Websocket` support) and `TCP` endpoints
 
-This fork is a rewrite with proper testing framework, linted code, compatible with node >= 0.8, class inheritance, and added functionalities
+This fork is a rewrite with proper testing framework, linted code, compatible with node 0.8.x and 0.10.x, class inheritance, and added functionalities
 
 ## Install
 

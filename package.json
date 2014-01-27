@@ -1,6 +1,6 @@
 {
   "name": "json-rpc2",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "JSON-RPC 2.0 server and client library, with HTTP, TCP and Websocket endpoints",
   "main": "./src/jsonrpc.js",
   "keywords": [
@@ -27,7 +27,7 @@
     "eventemitter3": "*"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": "0.8.x || 0.10.x"
   },
   "contributors": [
     "Bill Casarin <bill@casarin.ca> (jb55.com)",
