@@ -85,9 +85,7 @@ module.exports = function (classes){
             // Are we in the server?
             this.endpoint.handleCall(msg, this, function handleCall(err, result){
               if (err) {
-                if (self.listeners('error').length) {
-                  self.emit('error', err);
-                }
+                self.emit('error', err);
 
                 EventEmitter.trace('-->',
                   'Failure ' + (EventEmitter.hasId(msg) ? '(id ' + msg.id + ')' : '') + ': ' +

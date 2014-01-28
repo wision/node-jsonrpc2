@@ -141,22 +141,33 @@ module.exports = function (classes) {
 
           // Check for the required fields, and if they aren't there, then
           // dispatch to the handleHttpError function.
-          if (!(decoded.method && decoded.params && decoded.id)) {
+          if (!decoded.method || !decoded.params) {
             Endpoint.trace('-->', 'Response (invalid request)');
             Server.handleHttpError(req, res, new Error.InvalidRequest(INVALID_REQUEST), self.opts.headers);
             return;
           }
 
           var reply = function reply(json) {
-            var encoded = JSON.stringify(json);
+            var encoded, headers = {
+              'Content-Type': 'application/json'
+            };
+
+            if (json) {
+              encoded = JSON.stringify(json);
+              headers['Content-Length'] = Buffer.byteLength(encoded, 'utf-8');
+            } else {
+              encoded = '';
+              headers['Content-Length'] = 0;
+            }
+
+            headers = extend(self.opts.headers, headers);
 
             if (!conn.isStreaming) {
-              res.writeHead(200, extend(self.opts.headers, {'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(encoded, 'utf-8')}));
+              res.writeHead(200, headers);
               res.write(encoded);
               res.end();
             } else {
-              res.writeHead(200, extend(self.opts.headers, {'Content-Type': 'application/json'}));
+              res.writeHead(200, headers);
               res.write(encoded);
               // Keep connection open
             }
@@ -170,10 +181,13 @@ module.exports = function (classes) {
 
               Endpoint.trace('-->', 'Failure (id ' + decoded.id + '): ' +
                 (err.stack ? err.stack : err.toString()));
+
               result = null;
+
               if (!(err instanceof Error.AbstractError)) {
                 err = new Error.InternalError(err.toString());
               }
+
               response = {
                 'jsonrpc': '2.0',
                 'error': {code: err.code, message: err.message }
@@ -182,18 +196,21 @@ module.exports = function (classes) {
             } else {
               Endpoint.trace('-->', 'Response (id ' + decoded.id + '): ' +
                 JSON.stringify(result));
+
               response = {
                 'jsonrpc': '2.0',
                 'result': result || null
               };
             }
+
             // Don't return a message if it doesn't have an ID
             if (Endpoint.hasId(decoded)) {
               response.id = decoded.id;
               reply(response);
+            } else {
+              reply();
             }
           };
-
 
           var conn = new classes.HttpServerConnection(self, req, res);
 
