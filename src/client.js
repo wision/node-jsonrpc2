@@ -4,6 +4,7 @@ module.exports = function (classes){
   var
     net = require('net'),
     http = require('http'),
+    https = require('https'),
     WebSocket = classes.Websocket,
     JsonParser = require('jsonparse'),
     EventEmitter = classes.EventEmitter,
@@ -68,8 +69,16 @@ module.exports = function (classes){
           method  : 'POST',
           headers : headers
         };
+        var request;
+        if(opts.https === true) {
+          if(opts.rejectUnauthorized !== undefined) {
+            options.rejectUnauthorized = opts.rejectUnauthorized;
+          }
+          request = https.request(options);
+        } else {
+          request = http.request(options);
+        }
 
-        var request = http.request(options);
 
         // Report errors from the http client. This also prevents crashes since
         // an exception is thrown if we don't handle this event.
