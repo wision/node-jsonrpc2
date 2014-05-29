@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/pocesar/node-jsonrpc2.png?branch=master)](https://travis-ci.org/pocesar/node-jsonrpc2)
+[![Build Status](https://travis-ci.org/pocesar/node-jsonrpc2.svg?branch=master)](https://travis-ci.org/pocesar/node-jsonrpc2)
 
-[![NPM](https://nodei.co/npm/json-rpc2.png?downloads=true)](https://nodei.co/npm/json-rpc2/)
+[![NPM](https://nodei.co/npm/json-rpc2.svg?downloads=true)](https://nodei.co/npm/json-rpc2/)
 
 # node-jsonrpc2
 
@@ -101,7 +101,7 @@ server.newFunction(); // already available
 client.newFunction(); // already available
 ```
 
-To implement a new class method (that can be called without an instance, like `rpc.Endpoint.newFunction`:
+To implement a new class method (that can be called without an instance, like `rpc.Endpoint.newFunction`):
 
 ```js
 var rpc = require('json-rpc2');
