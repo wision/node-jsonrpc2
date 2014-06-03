@@ -7,8 +7,9 @@ module.exports = function (classes){
   var Errors = {};
 
   Errors.AbstractError = classes.ES5Class.$define('AbstractError', {
-    construct: function(message){
+    construct: function(message, extra){
       this.name = this.$class.$className;
+      this.extra = extra || {};
       this.message = message || this.$class.$className;
       Error.captureStackTrace(this, this.$class);
     },
