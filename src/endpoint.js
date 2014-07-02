@@ -53,7 +53,7 @@ module.exports = function (classes){
       },
       handleCall: function (decoded, conn, callback){
         EventEmitter.trace('<--', 'Request (id ' + decoded.id + '): ' +
-          decoded.method + '(' + decoded.params.join(', ') + ')');
+          decoded.method + '(' + JSON.stringify(decoded.params) + ')');
 
         if (!this.functions.hasOwnProperty(decoded.method)) {
           callback(new Error.MethodNotFound('Unknown RPC call "' + decoded.method + '"'));
