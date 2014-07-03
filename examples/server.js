@@ -1,6 +1,6 @@
 var rpc = require('../src/jsonrpc');
 
-var server = rpc.Server.create({
+var server = rpc.Server.$create({
   websocket: true
 });
 

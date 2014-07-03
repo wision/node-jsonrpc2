@@ -5,8 +5,10 @@ module.exports = function (classes){
     _ = classes._,
     EventEmitter = classes.EventEmitter,
     Connection = EventEmitter.$define('Connection', {
-      construct: function (ep){
-        this.$super();
+      construct: function ($super, ep){
+        console.log('connection super', $super);
+
+        $super();
 
         this.endpoint = ep;
         this.callbacks = {};

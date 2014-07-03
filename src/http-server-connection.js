@@ -4,10 +4,10 @@ module.exports = function (classes){
   var
     Connection = classes.Connection,
     HttpServerConnection = Connection.$define('HttpServerConnection', {
-    construct: function (server, req, res){
+    construct: function ($super, server, req, res){
       var self = this;
 
-      this.$super(server);
+      $super(server);
 
       this.req = req;
       this.res = res;
@@ -21,8 +21,8 @@ module.exports = function (classes){
     /**
      * Can be called before the response callback to keep the connection open.
      */
-    stream: function (onend){
-      this.$super(onend);
+    stream: function ($super, onend){
+      $super(onend);
 
       this.isStreaming = true;
     },

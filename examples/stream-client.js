@@ -12,7 +12,7 @@ var rpc = require('../src/jsonrpc');
 /*
  Connect to HTTP server
  */
-var client = rpc.Client.create(8088, 'localhost');
+var client = rpc.Client.$create(8088, 'localhost');
 
 client.stream('listen', [], function (err, connection){
   if (err) {
@@ -32,7 +32,7 @@ client.stream('listen', [], function (err, connection){
 /*
  Connect to Raw socket server
  */
-var socketClient = rpc.Client.create(8089, 'localhost');
+var socketClient = rpc.Client.$create(8089, 'localhost');
 
 socketClient.connectSocket(function (err, conn){
   if (err) {

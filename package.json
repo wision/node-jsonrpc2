@@ -22,7 +22,7 @@
     "jsonparse": "*",
     "debug": "*",
     "lodash": "*",
-    "es5class": "1.x.x",
+    "es5class": "2.x.x",
     "faye-websocket": "*",
     "eventemitter3": "*"
   },

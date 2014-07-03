@@ -11,10 +11,12 @@ module.exports = function (classes){
      * representing both the server and client perspective.
      */
       SocketConnection = Connection.$define('SocketConnection', {
-      construct: function (endpoint, conn){
+      construct: function ($super, endpoint, conn){
         var self = this;
 
-        self.$super(endpoint);
+        console.log('socket connection super', $super);
+
+        $super(endpoint);
 
         self.conn = conn;
         self.autoReconnect = true;
@@ -36,7 +38,7 @@ module.exports = function (classes){
           self.emit('close', hadError);
 
           if (
-            self.endpoint.$class.$className === 'Client' &&
+            self.endpoint.$className === 'Client' &&
               self.autoReconnect && !self.ended
             ) {
             if (hadError) {
@@ -66,7 +68,7 @@ module.exports = function (classes){
 
       reconnect: function (){
         this.ended = false;
-        if (this.endpoint.$class.$className === 'Client') {
+        if (this.endpoint.$className === 'Client') {
           this.conn.connect(this.endpoint.port, this.endpoint.host);
         } else {
           throw new Error('Cannot reconnect a connection from the server-side.');

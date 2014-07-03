@@ -19,8 +19,8 @@ module.exports = function (classes) {
      * JSON-RPC Server.
      */
       Server = Endpoint.$define('Server', {
-      construct: function (opts) {
-        this.$super();
+      construct: function ($super, opts) {
+        $super();
 
         this.opts = opts || {};
         this.opts.type = typeof this.opts.type !== 'undefined' ? this.opts.type : 'http';

@@ -16,8 +16,8 @@ module.exports = function (classes){
      * JSON-RPC Client.
      */
       Client = Endpoint.$define('Client', {
-      construct    : function (port, host, user, password){
-        this.$super();
+      construct    : function ($super, port, host, user, password){
+        $super();
 
         this.port = port;
         this.host = host;

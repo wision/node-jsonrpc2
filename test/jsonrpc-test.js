@@ -7,12 +7,12 @@ var
 
 module.exports = {
   beforeEach     : function (){
-    server = rpc.Server.create();
+    server = rpc.Server.$create();
 
     // MOCK REQUEST/RESPONSE OBJECTS
     MockRequest = rpc.EventEmitter.$define('MockRequest', {
-      construct: function(method){
-        this.$super();
+      construct: function($super, method){
+        $super();
         this.method = method;
       }
     });
@@ -44,8 +44,8 @@ module.exports = {
     server.expose('javascript_error', javascript_error);
 
     MockResponse = rpc.EventEmitter.$define('MockResponse', {
-      construct: function(){
-        this.$super();
+      construct: function($super){
+        $super();
 
         this.writeHead = this.sendHeader = function (httpCode){
           this.httpCode = httpCode;

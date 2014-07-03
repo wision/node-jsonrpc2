@@ -8,15 +8,16 @@ module.exports = function (classes){
 
   Errors.AbstractError = classes.ES5Class.$define('AbstractError', {
     construct: function(message, extra){
-      this.name = this.$class.$className;
+      this.name = this.$className;
       this.extra = extra || {};
-      this.message = message || this.$class.$className;
+      this.message = message || this.$className;
+
       Error.captureStackTrace(this, this.$class);
     },
     toString: function(){
       return this.message;
     }
-  }).$implement(Error, true);
+  }).$inherit(Error, []);
 
   Errors.ParseError = Errors.AbstractError.$define('ParseError', {
     code: -32700

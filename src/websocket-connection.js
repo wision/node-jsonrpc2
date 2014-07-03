@@ -11,10 +11,10 @@ module.exports = function (classes){
      * representing both the server and client perspective.
      */
       WebSocketConnection = Connection.$define('WebSocketConnection', {
-      construct: function (endpoint, conn){
+      construct: function ($super, endpoint, conn){
         var self = this;
 
-        self.$super(endpoint);
+        $super(endpoint);
 
         self.conn = conn;
         self.ended = false;

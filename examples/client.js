@@ -4,7 +4,7 @@ var
 /*
  Connect to HTTP server
  */
-var client = rpc.Client.create(8088, 'localhost', 'myuser', 'secret123');
+var client = rpc.Client.$create(8088, 'localhost', 'myuser', 'secret123');
 
 client.call('add', [1, 2], function (err, result){
   if (err) {
@@ -31,7 +31,7 @@ client.call('delayed.echo', ['Echo.', 1500], function (err, result){
 /*
  Connect to Raw socket server
  */
-var socketClient = rpc.Client.create(8089, 'localhost', 'myuser', 'secret123');
+var socketClient = rpc.Client.$create(8089, 'localhost', 'myuser', 'secret123');
 
 socketClient.connectSocket(function (err, conn){
   if (err) {
@@ -67,7 +67,7 @@ socketClient.connectSocket(function (err, conn){
 /*
  Connect to Websocket server
  */
-var WebsocketClient = rpc.Client.create(8088, 'localhost', 'myuser', 'secret123');
+var WebsocketClient = rpc.Client.$create(8088, 'localhost', 'myuser', 'secret123');
 
 WebsocketClient.connectWebsocket(function (err, conn){
   if (err) {

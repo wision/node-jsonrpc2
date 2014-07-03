@@ -20,7 +20,7 @@ module.exports = function (classes){
     hasId : function (request){
       return request && typeof request['id'] !== 'undefined' && /^\-?\d+$/.test(request['id']);
     }
-  }).$implement(require('eventemitter3').EventEmitter, true);
+  }).$inherit(require('eventemitter3').EventEmitter, []);
 
   return EventEmitter;
 };

@@ -11,8 +11,8 @@ module.exports = function (classes){
      * Has the ability to register RPC events and expose RPC methods.
      */
       Endpoint = EventEmitter.$define('Endpoint', {
-      construct : function (){
-        this.$super();
+      construct : function ($super){
+        $super();
 
         this.functions = {};
         this.scopes = {};
