@@ -165,7 +165,7 @@ module.exports = function (classes) {
             if (!conn.isStreaming) {
               res.writeHead(200, headers);
               res.write(encoded);
-              res.connection.removeListener('end', conn.connectionEndHandler);
+              conn.connectionEndHandler();
               res.end();
             } else {
               res.writeHead(200, headers);

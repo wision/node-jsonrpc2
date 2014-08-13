@@ -13,7 +13,6 @@ module.exports = function (classes){
       this.res = res;
       this.isStreaming = false;
 
-      this.res.connection.on('end', this.connectionEndHandler);
     },
 
     connectionEndHandler: function(){
