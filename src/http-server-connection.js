@@ -13,11 +13,9 @@ module.exports = function (classes){
       this.res = res;
       this.isStreaming = false;
 
-      this.res.connection.on('end', this.connectionEndHandler);
-    },
-
-    connectionEndHandler: function(){
-        this.emit('end');
+      this.res.connection.on('end', function responseEnd(){
+        self.emit('end');
+      });
     },
 
     /**
