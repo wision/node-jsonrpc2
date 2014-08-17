@@ -8,6 +8,10 @@ JSON-RPC 2.0 server and client library, with `HTTP` (with `Websocket` support) a
 
 This fork is a rewrite with proper testing framework, linted code, compatible with node 0.8.x and 0.10.x, class inheritance, and added functionalities
 
+## Tools
+
+Check [jsonrpc2-tools](https://www.npmjs.org/package/jsonrpc2-tools) for some nice additions to this module.
+
 ## Install
 
 To install node-jsonrpc2 in the current directory, run:
