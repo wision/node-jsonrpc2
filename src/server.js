@@ -116,6 +116,18 @@ module.exports = function (classes) {
        */
       handleHttp: function (req, res) {
         var buffer = '', self = this;
+        var headers;
+
+        if (req.method === 'OPTIONS') {
+          headers = {
+            'Content-Length': 0,
+            'Access-Control-Allow-Headers': 'Accept, Authorization, Content-Type'
+          };
+          headers = extend(self.opts.headers, headers);
+          res.writeHead(200, headers);
+          res.end();
+          return;
+        }
 
         if (!self._checkAuth(req, res)) {
           return;
@@ -148,7 +160,8 @@ module.exports = function (classes) {
           }
 
           var reply = function reply(json) {
-            var encoded, headers = {
+            var encoded;
+            headers = {
               'Content-Type': 'application/json'
             };
 
