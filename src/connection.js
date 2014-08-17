@@ -6,8 +6,6 @@ module.exports = function (classes){
     EventEmitter = classes.EventEmitter,
     Connection = EventEmitter.$define('Connection', {
       construct: function ($super, ep){
-        console.log('connection super', $super);
-
         $super();
 
         this.endpoint = ep;
@@ -64,7 +62,9 @@ module.exports = function (classes){
        */
       stream: function (onend){
         if (_.isFunction(onend)) {
-          this.on('end', onend);
+          this.on('end', function(){
+            onend();
+          });
         }
       },
 

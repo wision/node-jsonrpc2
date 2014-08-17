@@ -1,6 +1,6 @@
 {
   "name": "json-rpc2",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "JSON-RPC 2.0 server and client library, with HTTP, TCP and Websocket endpoints",
   "main": "./src/jsonrpc.js",
   "keywords": [

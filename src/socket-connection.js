@@ -14,8 +14,6 @@ module.exports = function (classes){
       construct: function ($super, endpoint, conn){
         var self = this;
 
-        console.log('socket connection super', $super);
-
         $super(endpoint);
 
         self.conn = conn;

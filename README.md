@@ -24,7 +24,7 @@ Firing up an efficient JSON-RPC server becomes extremely simple:
 var rpc = require('json-rpc2');
 
 var server = rpc.Server.create({
-    'websocket': true // is true by default
+    'websocket': true, // is true by default
     'headers': { // allow custom headers is empty by default
         'Access-Control-Allow-Origin': '*'
     }
@@ -122,8 +122,8 @@ Don't forget, when you are overloading an existing function, you can call the or
 var rpc = require('json-rpc2');
 
 rpc.Endpoint.implement({
-    'trace': function(direction, message){
-        this.$super(' (' + direction + ')', message); //call the last defined function
+    'trace': function($super, direction, message){
+        $super(' (' + direction + ')', message); //call the last defined function
     }
 });
 ```
