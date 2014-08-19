@@ -27,7 +27,7 @@ Firing up an efficient JSON-RPC server becomes extremely simple:
 ```js
 var rpc = require('json-rpc2');
 
-var server = rpc.Server.create({
+var server = rpc.Server.$create({
     'websocket': true, // is true by default
     'headers': { // allow custom headers is empty by default
         'Access-Control-Allow-Origin': '*'
@@ -58,7 +58,7 @@ And creating a client to speak to that server is easy too:
 ```js
 var rpc = require('json-rpc2');
 
-var client = rpc.Client.create(8000, 'localhost');
+var client = rpc.Client.$create(8000, 'localhost');
 
 // Call add function on the server
 
@@ -72,7 +72,7 @@ Create a raw (socket) server using:
 ```js
 var rpc = require('json-rpc2');
 
-var server = rpc.Server.create();
+var server = rpc.Server.$create();
 
 // non-standard auth for RPC, when using this module using both client and server, works out-of-the-box
 server.enableAuth('user', 'pass');
@@ -98,8 +98,8 @@ rpc.Endpoint.include({
 });
 
 var
-    server = rpc.Server.create(),
-    client = rpc.Client.create();
+    server = rpc.Server.$create(),
+    client = rpc.Client.$create();
 
 server.newFunction(); // already available
 client.newFunction(); // already available
@@ -144,7 +144,7 @@ var MyCoolServer = require('json-rpc2').Server.define('MyCoolServer', {
 }); // MyCoolServer will contain all class and instance functions from Server
 
 MyCoolServer.myOwnClassMethod(); // class function
-MyCoolServer.create().myOwnFunction(); // instance function
+MyCoolServer.$create().myOwnFunction(); // instance function
 ```
 
 ## Debugging
