@@ -1,7 +1,7 @@
 var rpc = require('../src/jsonrpc');
 var events = require('events');
 
-var server = rpc.Server.create();
+var server = rpc.Server.$create();
 
 server.on('error', function (err){
   console.log(err.toString());
