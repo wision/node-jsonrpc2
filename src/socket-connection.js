@@ -52,7 +52,16 @@ module.exports = function (classes){
       },
       write    : function (data){
         if (!this.conn.writable) {
-          // Other side disconnected, we'll quietly fail
+          // Other side disconnected, we'll quietly fail / WAT?
+          var peer = {
+            address: "unknown",
+            port: "unknown"
+          }
+          if (this.conn._peername) {
+            peer = this.conn._peername;
+          }
+          console.log(new Date(), "Error: Attempted to write data to non-writable socket:", peer.address + ":" + peer.port);
+          this.conn.emit("close", "Socket is not writable anymore.");
           return;
         }
 
