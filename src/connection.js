@@ -32,6 +32,21 @@ module.exports = function (classes){
           this.callbacks[id] = callback;
         }
 
+        var self = this;
+        this.timer = setTimeout(function() {
+          if(self.callbacks[id]) {
+            console.log(new Date(), "timeout: cleaning after", method);
+
+            try {
+              self.callbacks[id]("Active timeout on " + method, {});
+            } catch (err) {
+              console.log(new Date(), "error from callback", err, err.stack);
+            }
+
+            delete self.callbacks[id];
+          }
+        }, 300 * 1000);
+
         EventEmitter.trace('-->', 'Connection call (method ' + method + '): ' + JSON.stringify(params));
 
         var data = JSON.stringify({
@@ -71,6 +86,8 @@ module.exports = function (classes){
       handleMessage: function (msg){
         var self = this;
 
+        clearTimeout(this.timer);
+
         if (msg) {
           if (
               (msg.hasOwnProperty('result') || msg.hasOwnProperty('error')) &&
@@ -78,9 +95,12 @@ module.exports = function (classes){
             ) {
             // Are we in the client?
             try {
-              this.callbacks[msg.id](msg.error, msg.result);
-              delete this.callbacks[msg.id];
+              if (this.callbacks[msg.id]) {
+                this.callbacks[msg.id](msg.error, msg.result);
+                delete this.callbacks[msg.id];
+              }
             } catch (err) {
+              console.log(new Date(), "error from callback2", err, err.stack);
               EventEmitter.trace('<---', 'Callback not found ' + msg.id + ': ' + (err.stack ? err.stack : err.toString()));
             }
           } else if (msg.hasOwnProperty('method')) {
