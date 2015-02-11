@@ -245,6 +245,8 @@ module.exports = function (classes) {
         Endpoint.trace('<--', 'Accepted socket connection');
 
         conn = new classes.SocketConnection(self, socket);
+        self.conn = conn;
+        socket.server.conn = conn;
         parser = new JsonParser();
         requireAuth = !!this.authHandler;
 
