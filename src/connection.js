@@ -35,12 +35,12 @@ module.exports = function (classes){
         var self = this;
         this.timer = setTimeout(function() {
           if(self.callbacks[id]) {
-            console.log(new Date(), "timeout: cleaning after", method);
+            console.log(new Date(), 'timeout: cleaning after', method);
 
             try {
-              self.callbacks[id]("Active timeout on " + method, {});
+              self.callbacks[id]('Active timeout on ' + method, {});
             } catch (err) {
-              console.log(new Date(), "error from callback", err, err.stack);
+              console.log(new Date(), 'error from callback', err, err.stack);
             }
 
             delete self.callbacks[id];
@@ -100,7 +100,7 @@ module.exports = function (classes){
                 delete this.callbacks[msg.id];
               }
             } catch (err) {
-              console.log(new Date(), "error from callback2", err, err.stack);
+              console.log(new Date(), 'error from callback2', err, err.stack);
               EventEmitter.trace('<---', 'Callback not found ' + msg.id + ': ' + (err.stack ? err.stack : err.toString()));
             }
           } else if (msg.hasOwnProperty('method')) {
