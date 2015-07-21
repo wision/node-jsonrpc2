@@ -100,7 +100,7 @@ module.exports = function (classes){
                 delete this.callbacks[msg.id];
               }
             } catch (err) {
-              console.log(new Date(), 'error from callback2', err, err.stack);
+              console.log(new Date(), 'error from callback2', err, err.stack, JSON.stringify(msg));
               EventEmitter.trace('<---', 'Callback not found ' + msg.id + ': ' + (err.stack ? err.stack : err.toString()));
             }
           } else if (msg.hasOwnProperty('method')) {
