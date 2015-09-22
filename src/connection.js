@@ -33,7 +33,7 @@ module.exports = function (classes){
         }
 
         var self = this;
-        this.timer = setTimeout(function() {
+        this.handleTimeout = function() {
           if(self.callbacks[id]) {
             console.log(new Date(), 'timeout: cleaning after', method);
 
@@ -45,7 +45,8 @@ module.exports = function (classes){
 
             delete self.callbacks[id];
           }
-        }, 300 * 1000);
+        };
+        this.timer = setTimeout(this.handleTimeout, 300 * 1000);
 
         EventEmitter.trace('-->', 'Connection call (method ' + method + '): ' + JSON.stringify(params));
 
